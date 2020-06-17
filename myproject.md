@@ -115,3 +115,20 @@
 - 연예인에 대한 학습률 및 정확도 -> 95% / 88%
 
 ## sogaething (2020.05.11 ~ 2020.06.12)
+- 조건 검색 기반으로 중고물품을 매칭시켜주는 중고거래 플랫폼
+- 조건매칭 + 해시태그 검색
+- 개발 스택 : Postman, Jira, Mattermost, GitLab, Java, MySQL, JWT, Spring Boot, Spring Security,
+              GraphQL, JPA,
+              (Sketch, Zeplin, TypeScript, MongoDB, Redis, React, Mobx, Next, WebSocket)
+- 주 역할 : 백 엔드(GraphQL API + DB 설계 + @)
+- post, file, product, hashtag, jjim, history, matching, user 테이블 설계 및 구성
+- 카카오 로그인 + JWT + Security 적용
+- JPA를 활용하여 DB 활용도를 높임
+- 기능 CRUD 구성 +  GraphQL을 통한 API 구성(Mutation, Query)
+- Imgur API / Imgbb API를 이용한 파일 업로드(상품 이미지 / 유저 프로필 이미지)
+- 판매글 입력시 해시태그, 파일 이미지, 제목, 내용, 가격 등 입력
+- 해시태그 자동완성 -> 저장된 해시태그 정보 기반(현재 저장된 갯수 포함)
+- 매칭(구매 매칭 입력 시 해시태그를 기반으로 가장 유사한 상품 제공)
+- 매칭 결과 연락하기 -> 채팅으로 연락가능
+- 채팅 -> 메시지, 토스 송금 기능 가능
+- Redis를 사용하여 성능 개선 + 채팅 관련 DB -> MongoDB 구성

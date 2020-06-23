@@ -634,10 +634,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - REST가 지원하는 프레임워크나 언어등 도구들이 없어도 구현이 가능
     - 기존 웹 인프라를 사용가능 (HTTP를 그대로 사용하기 때문)
     - 서버와 클라이언트의 역할을 명확히 분리한다
+    - Hypermedia API의 기본을 충실히 지키며 범용성을 보장
+    - REST API 메시지가 의도하는 바를 명확하게 나타내므로 의도를 쉽게 파악 가능
   - 단점
+    - Method 형태가 제한적이다
     - HTTP 프로토콜만 사용이 가능하다
     - P2P 통신 모델을 가정했기에 둘 이상을 대상으로하는 분산환경에는 유용하지 않다
     - 보안, 정책 등에 대한 표준이 없어 관리가 어렵고, 설계나 구현에 어려움을 갖는다
+    - 구형 브라우저가 아직 제대로 지원해주지 못하는 부분 존재 (PUT, DELETE)
     
 - REST 특징
   - Uniform : URI로 지정한 리소스에 대한 조작을 통일되고 한정적인 인터페이스로 수행하는 아키텍처 스타일
@@ -654,7 +658,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
   - HTTP 표준을 기반으로 구현하므로, HTTP를 지원하느 프로그램 언어로 클라이언트, 서버를 구현할 수 있다
 - RESTful
   - 'REST API'를 제공하는 웹서비스를 'RESTful'하다고 할 수 있다. (REST 원리를 따르는 시스템)
-  
+- REST가 필요한 이유
+   - 애플리케이션 분리 및 통합
+   - 다양한 클라이언트 등장
+   - 멀티 플랫폼에 대한 지원을 위해 서비스 자원에 대한 아키텍쳐를 세우고 이용하는 방법을 모색한 결과 REST에 관심을 가짐
+
 9. GraphQL
 - SQL : 데이터베이스 시스템에 저장된 데이터를 효율적으로 가져오는 것이 목적, 주로 서버에서 호출
 - GraphQL : 웹 클라이언트가 데이터를 서버로부터 효율적으로 가져오는 것이 목적, 주로 클라이언트에서 호출

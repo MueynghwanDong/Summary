@@ -450,7 +450,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - Mybatis는 mapper 파일에 있는 각 SQL 명령어들을 Map에 담아 저장하고 관리
 - MyBatis Databases Aceess 구조
 
-  ![ex_screenshot](/res/mybatis2.png)
+  ![ex_screenshot](/res/mybatis2.jpg)
 - Mybatis API
   - SqlSessinFactoryBuilder 클래스 : build()메소드를 통해 mybatis-config를 로딩하여 SqlSessionFactory 객체 생성
   - SqlSessionFactory 클래스 : SqlSession 객체에 대한 팩토리 객체, openSession() 메소드를 통해 SqlSession 객체를 얻을 수 있다.

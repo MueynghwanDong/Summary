@@ -836,4 +836,59 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 - JWT 단점
   - 클라이언트에 저장되어 DB에서 사용자 정보를 조작하더라도 토큰에 직접 적용할 수 없다
   - 비상태 애플리케이션에서 토큰은 거의 모든 요청에 전송 -> 트래픽 크기에 영향을 미칠 수 있다
+  
 13. Security + Oauth 2.0
+- 인증과 리소스에 대한 권한부여 기능 -> OAuth
+- OAuth는 서버와 클라이언트 사이에 인증 완료하면 서버는 권한부여 결과로써 access token을 전송
+- 클라이언트는 access token을 이용해 접근 및 서비스를 요청 할 수 있다
+- 서버는 aceess token 기반으로 서비스와 권한을 확인하여 접근 허용여부 결정
+- 결과 데이터를 클라이언트에게 보내줌
+- 서버는 access token을 기반으로 클라이언트를 확인하여 서비스
+- OAuth2.0 : 외부 서비스의 인증 및 권한부여를 관리하는 범용 프레임워크
+  - OAuth 기반 서비스의 API를 호출 할때, HTTP 헤더에 access token을 포함하여 요청을 보냄
+  - 서비스는 access token을 검사하면서 요청이 유효한지 판단하여 적절한 결과를 응답
+- OAuth를 구성하고 있는 주요 4가지 객체
+  - resource owner(자원 소유자) : protected resource에 접근하는 권한을 제공
+  - resource server(자원 서버) : access token을 사용해서 요청을 수신할 때, 권한을 검증한 후 적절한 결과를 응답
+  - client : resource owner의 protected resource에 접근을 요청하는 애플리케이션
+  - authorization Server는 client가 성공적으로 access token을 발급받은 이후 resource owner를 인증하고 권한을 부여
+- 간단한 권한 허가 절차
+
+  ![ex_screenshot](/res/oauth.JPG)
+  - client가 resource owner에게 권한 요청 
+  - resource owner가 권한을 허가하면, client는 권한 증서를 발급 받음
+    - authoriztion은 소유자가 자원에 접근할 수 있는 권한을 부여하였다는 확인증 
+    - client가 access token을 얻어오는데 사용
+    - authorization 4개 타입
+      - Authorization Code : Client가 Resource Owner에게 직접 권한 부여를 요청하는 대신, Resource owner가 권한 서버에서 인증을 받고 권한을 허가, 허가 시 권한 코드가 발급되고 클라이언트에게 전달
+        - 클라이언트는 코드를 서버에 보내주며 권한 허가를 받은 사실을 알리고  access token을 받게됨
+      - Impicit : 권한 코드를 간소화한 절차
+        - 권한 코드 방식에서 access token을 얻기기위해 권한 코드를 별도 발급하지 않고 access token이 바로 발급
+      - Resorce Owner Password Credentials : 자원 소유자의 계정 아이디, 비밀번호 같은 계정 인증 정보가 access token을 얻기 위한 권한 증서로 사용
+        - 계정정보를 애플리케이션에 직접 입력해야하므로 신뢰할 수 있어야함
+        - access token을 얻은 후 리소스 요청을 위해 계정 인증정보를 클라이언트가 보관할 필요 없음
+      - Client Credential : 클라이언트 인증 방식
+        - 클라이언트가 관리하는 리소스에만 접근할 경우로 권한이 한정되어 있을 때 활용 가능
+        - 클라이언트는 자기를 인증할 수 있는 정보를 권한 서버에 보내면서 access token을 요청
+    - 권한 증서를 받은 클라이언트는 최종 목적인 access token을 권한 서버에 요청
+    - 요청받은 권한 서버는 클라이언트가 보낸 권한 증서의 유효성을 검증
+    - 유효하다면 access token 발급하고 결과를 클라이언트에게 알려줌
+    - access token을 받은 클라이언트는 자원 서버에 자원을 요청
+    - 요청 받은 자원 서버는 access token의 유효성을 검증하고 유효한 경우 요청을 처리
+- Access and Refresh Token
+  - Access token : 요청 절차를 정상적으로 종료한 클라이언트에게 발급
+    - 보호된 자원에 접근할 때 권한 확인용으로 사용
+    - 계정 인증에 필요한 형태들을 토큰으로 표현함으로써, 리소스 서버는 여러 인증 방식에 대응하지 않아ㅏ도 권한을 확일 할 수 있게됨.
+  - Refresh token 
+    - 사용하고 있던 access token이 유효기간 종료 등으로 만료될 경우 새로운 토큰을 얻을 때 사용
+    - 권한 서버가 access token을 발급해주는 시점에 refresh token도 함께 발급하여 클라이언트에 알려줌
+    - 전용 발급 절차 없이 미리 가지고 있을 수 있음
+    - 권한 서버에만 활용되며 리소스 서버에는 전송되지 않음
+
+- 인증 종류
+- Authorization Code Grant
+  - 
+    
+    
+    
+    

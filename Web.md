@@ -425,7 +425,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
       - View와 Model 사이 의존성이 없다
       - 각 부분이 독립적이기 때문에 모듈화 하여 개발 할 수 있다
       - View Model 설계가 쉽지 않다
-5. Security + Oauth 2.0
+5. promise  
 
 6. myBatis vs sequalize 
 - mybatis
@@ -450,11 +450,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - Mybatis는 mapper 파일에 있는 각 SQL 명령어들을 Map에 담아 저장하고 관리
 - MyBatis Databases Aceess 구조
 
-  ![ex_screenshot](/res/mybatis2.png)
+  ![ex_screenshot](/res/mybatis2.jpg)
 - Mybatis API
   - SqlSessinFactoryBuilder 클래스 : build()메소드를 통해 mybatis-config를 로딩하여 SqlSessionFactory 객체 생성
   - SqlSessionFactory 클래스 : SqlSession 객체에 대한 팩토리 객체, openSession() 메소드를 통해 SqlSession 객체를 얻을 수 있다.
-<prd><code>
+<pre><code>
   public class SqlSessionFactoryBean { 
     private static SqlSessionFactory sessionFactory = null;
     static {
@@ -634,10 +634,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - REST가 지원하는 프레임워크나 언어등 도구들이 없어도 구현이 가능
     - 기존 웹 인프라를 사용가능 (HTTP를 그대로 사용하기 때문)
     - 서버와 클라이언트의 역할을 명확히 분리한다
+    - Hypermedia API의 기본을 충실히 지키며 범용성을 보장
+    - REST API 메시지가 의도하는 바를 명확하게 나타내므로 의도를 쉽게 파악 가능
   - 단점
+    - Method 형태가 제한적이다
     - HTTP 프로토콜만 사용이 가능하다
     - P2P 통신 모델을 가정했기에 둘 이상을 대상으로하는 분산환경에는 유용하지 않다
     - 보안, 정책 등에 대한 표준이 없어 관리가 어렵고, 설계나 구현에 어려움을 갖는다
+    - 구형 브라우저가 아직 제대로 지원해주지 못하는 부분 존재 (PUT, DELETE)
     
 - REST 특징
   - Uniform : URI로 지정한 리소스에 대한 조작을 통일되고 한정적인 인터페이스로 수행하는 아키텍처 스타일
@@ -654,7 +658,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
   - HTTP 표준을 기반으로 구현하므로, HTTP를 지원하느 프로그램 언어로 클라이언트, 서버를 구현할 수 있다
 - RESTful
   - 'REST API'를 제공하는 웹서비스를 'RESTful'하다고 할 수 있다. (REST 원리를 따르는 시스템)
-  
+- REST가 필요한 이유
+   - 애플리케이션 분리 및 통합
+   - 다양한 클라이언트 등장
+   - 멀티 플랫폼에 대한 지원을 위해 서비스 자원에 대한 아키텍쳐를 세우고 이용하는 방법을 모색한 결과 REST에 관심을 가짐
+
 9. GraphQL
 - SQL : 데이터베이스 시스템에 저장된 데이터를 효율적으로 가져오는 것이 목적, 주로 서버에서 호출
 - GraphQL : 웹 클라이언트가 데이터를 서버로부터 효율적으로 가져오는 것이 목적, 주로 클라이언트에서 호출
@@ -709,9 +717,123 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
   - HTTP와 HTTPs에 의한 Caching을 잘 사용하고 싶을 때
   - File 전송 등 단순한 Text로 처리되지 않는 요청들이 있을 때
   - 요청의 구조가 정해져 있을 때 
+
+11. Cookie vs Session
+- HTTP 프로토콜의 특징 
+  - 비연결지향 : 클라이언트가 request를 서버에 보내면, 서버는 클라이언트에게 response를 보내고 접속을 끊음
+  - 상태정보 유지 안함(stateless) : 연결을 끊는 순간 통신이 끝나며 상태 정보는 유지하지 않음
+- 쿠키 
+  - 클라이언트 로컬에 저장되는 키와 값이 들어있는 작은 데이터 파일
+  - 이름, 값, 만료날짜, 경로 정보가 들어있다
+  - 일정시간 데이터를 저장할 수 있다
+  - 클라이언트의 상태정보를 로컬에 저장했다 참조
+  - 쿠키 프로세스
+    - 브라우저 웹 페이지 접속
+    - 클라이언트가 요청한 웹 페이지를 받으며 쿠키를 클라이언트 로컬에 저장
+    - 클라이언트가 재 요청시 웹 페이지 요청과 함께 쿠키값 전송
+    - 지속적으로 로그인 정보를 가진 것 처럼 사용
+  - 클라이언트에 300개까지 쿠키 저장 가능, 하나의 도메인당 20개 값만 가질 수 있음
+  - 하나의 쿠키값은 4KB 까지 저장
+  - Response Header에 Set-Cookie 속성을 사용하면 클라이언트에 쿠키를 만들 수 있다
+  - 사용자가 따로 요청하지 않아도 브라우저가 Request시에 Request Header를 넣어 자동으로 서버에 전송
+- 세션
+  - 일정 시간동안 같은 브라우저로 부터 들어오는 일련의 요구를 하나의 상태로 보고 그 상태를 유지하는 기술
+  - 뒙 브라우저를 통해 웹 서버에 접속한 이후 브라우저를 종료할 때 까지 유지되는 상태
+  - 클라이언트가 Reqeust를 보내면, 해당 서버의 엔진이 클라이언트에게 유일한 id를 부여 -> 세션ID
+  - 세션 프로세스
+    - 클라이언트가 서버에 접속 시 세션 ID 발급
+    - 서버에서 클라이언트로 발급해준 세션 ID를 쿠키를 사용해 저장(JESSIONID)
+    - 클라이언트는 다시 접속 시, 쿠키를 이용해 세션ID 값을 서버에 전달
+    - 세션을 구별하기 위해 ID가 필요, ID만 쿠리를 이용해 저장 -> 쿠키는 자동으로 서버에 전송
+- 쿠키와 세션을 사용하는 이유
+  - HTTP 프로토콜의 특징이자 약점을 보완하기 위해 사용 
+  - 서버와 클라이언트가 통신 할 때 연속적으로 이어지지 않고 한번 통신이 되면 끊어짐
+  - 서버는 클라이언트가 누구인지 계속 인증을 해줘야한다 -> 쿠키와 세션이 해결방안
+  - 클라이언트와 정보 유지를 하기 위해 사용하는 것이 쿠키와 세션
+- 쿠키와 세션 차이
+  - 저장위치 : 쿠키는 클라이언트에 파일로 저장 / 세션은 서버에 저장
+  - 보안 
+    - 쿠키는 클라이언트 로컬에 저장되기 때문에 변질되거나 request에서 스나이핑 당할 우려가 있어 보안에 취약
+    - 세션은 쿠키를 이용해 sessionid만 저장하고 그것으로 구분해 서버에서 처리하기에 보안성이 좋다
+  - 라이프 사이클
+    - 쿠키도 만료시간이 있지만, 파일로 저장되기 때문에 브라우저 종료해도 계속 정보가 남아 있을 수 있다
+    - 세션도 만료 시간 정할 수 있지만 브라우저가 종료되면 만료시간에 상관없이 삭제
+  - 속도
+    - 쿠키에 저아보가 있기 때문에 서버에 요청시 속도가 빠르다
+    - 세션은 정보가 서버에 있기 때문에 처리가 요구되어 비교적 속도가 느리다
+  - 저장 형식 
+    - 쿠키 : text / 세션 : Object
+  - 사용 자원 : 쿠키 : 클라이언트 리소스 / 세션 : 웹 서버 리소스 
+  - 쿠키를 사용하는 이유 
+    - 세션은 서버 자원을 사용하기 때문에 무분별하게 만들다보면 서버의 메모리가 감당할 수 없어질 수 있고 속도가 느려질 수 있다.
   
-11. promise  
-
-12. Cookie vs Session
-
-13. JWT
+12. JWT(JSON Web Token)
+- 웹 표준으로 두 개체에서 JSON객체를 사용하여 가볍고 자가수용적인 방식으로 정보를 안정성 있게 전달해줌
+- 수많은 프로그래밍 언어에서 지원(Java, C, C++, Python, C#, JavaScript 등)
+- 자가 수용적 
+  - JWT는 필요한 모든 정보를 자체적으로 지니고 있다
+  - 토큰에 대한 기본정보, 전달할 정보, 토큰이 검증됐다 증명해주는 signature를 포함
+- 쉽게 전달 할 수 있다
+  - 두 개체 사이에서 손쉽게 전달 가능, 웹 서버의 경우 HTTP 헤더에 넣거나 URL 파라미터로 전달 가능
+- JWT가 사용되는 상황
+  - 회원 인증(JWT를 사용하느 가장 흔한 시나리오)
+    - 유저 로그인 -> 서버는 유저의 정보에 기반한 토큰을 발급하여 유저에게 전달
+    - 유저가 서버에 요청을 할 때마다 JWT를 포함해 전달
+    - 서버가 클라이언트에게 요청 받을 때 마다, 해당 토큰이 유효하고 인증됐는지 검증
+    - 유저가 요청한 작업에 권한이 있는지 확인하고 작업을 처리
+    - 유저가 요청시 토큰만 확인하면 되기에 세션 관리 필요 없음
+  - 정보 교류
+    - 두 개체 사이 안정성있게 정보를 교환하기 위해 좋은 방법
+    - 정보가 sign이 되어있기 때문에 정보를 보낸이가 바뀌지 않았는지, 조작되지 않았는지 검증 가능
+- JWT 구조
+  - Header
+    - typ : 토큰의 타입 지정
+    - alg : 해싱 알고리즘 지정(보통 HMAC SHA256 or RSA 사용) -> 검증 시 signature 부분에서 사용
+    <pre><code>
+    {
+      "typ" : "JWT",
+      "alg" : "HS256"
+    }
+    </code></pre>
+  - payload : 토큰에 담을 정보('한 조각'을 클레임(claim)이라고 부르며 name/value 한쌍으로 이루어짐)
+    - 클레임 종류 : 등록된 클레임, 공개된 클레임, 비공개 클레임
+    - 등록된 클레임 : 토큰에 대한 벙보들을 담기위해 정해진 클레임, 사용은 선택적
+      - iss : 토큰 발급자
+      - sub : 토큰 제목
+      - aud : 토큰 대상자
+      - exp : 토큰 만료시간
+      - nbf : Not Before, 토큰의 활성 날짜 
+      - iat : 토큰이 발급된 시간, 토큰의 age가 얼마나 되었는지 판단 가능
+      - jti : JWT의 고유 식별자, 주로 중복적인 처리를 방지하기 위해 사용, 일회성 토큰에 사용하면 유용
+    - 공개 클레임
+      - 충돌이 방지된 이름을 가지고 있어야함
+      - 클레임 이름을 URI 형식으로 짓는다.
+    - 비공개 클레임
+      - 클라이언트, 서버 협의하에 사용되는 클레임 이름들
+    - 예제
+    <pre><code>
+      {
+        "iss": "dong.com",
+        "exp": "1485270000000",
+        "https://dong.com/jwt_claims/is_admin": true,
+        "userId": "11028373727102",
+        "username": "dong"
+      }
+    </code></pre>
+  - 서명(signature)
+    - 헤더의 인코딩값, 정보의 인코딩값을 합친 후 주어진 비밀키로 해쉬하여 생성
+    <pre><code>
+      HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret)
+    </code></pre>
+- JWT 장점
+  - 사용자 인증에 필요한 모든 정보를 토큰에 포함하기에 별도의 인증 저장소가 필요 없다
+  - URL 파라키터와 헤더로 사용
+  - 수평 스케일이 용이
+  - 디버깅 및 관리가 용이
+  - 트래픽에 대한 부담이 낮음
+  - 내장된 만료
+  - REST 서비스로 제공 가능
+- JWT 단점
+  - 클라이언트에 저장되어 DB에서 사용자 정보를 조작하더라도 토큰에 직접 적용할 수 없다
+  - 비상태 애플리케이션에서 토큰은 거의 모든 요청에 전송 -> 트래픽 크기에 영향을 미칠 수 있다
+13. Security + Oauth 2.0

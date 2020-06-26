@@ -374,6 +374,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
   - Controller는 사용자 Action을 확인하고 Model을 업데이트
   - Controller는 Model을 나타내줄 Viewe 선택
   - View는 Model을 이용하여 화면을 나타냄
+- 처리 과정
+
+  ![ex_screenshot](/res/mvc2.JPG)
+  - 클라이언트 요청이 DispatcherServlet에 전달
+  - DispatcherServlet은 HandlerMapping을 사용, 클라이언트의 요청을 처리할 컨트롤러 객체를 찾음
+  - DispatcherServlet은 컨트롤 객체의 handleRequest() 메소드를 호출하여, 클라이언트의 요청을 처리
+  - Controller.handleRequest() 메소드는 처리 결과 정보를 담은 ModelAndView 객체를 리턴
+  - DispatcherServlet은 ViewResolver로 부터 처리결과를 보여줄 View를 구한다
+  - View는 클라이언트에 전송할 응답을 생성
+
 - MVC 한계
   - View와 Model 사이의 의존성이 높아 복잡해지며 유지보수가 어려울 수 있다.
   - View는 Controllere에 연결되어 화면을 구성하는 단위요소로 다수의 View를 가질 수 있다

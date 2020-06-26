@@ -837,7 +837,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
   - 클라이언트에 저장되어 DB에서 사용자 정보를 조작하더라도 토큰에 직접 적용할 수 없다
   - 비상태 애플리케이션에서 토큰은 거의 모든 요청에 전송 -> 트래픽 크기에 영향을 미칠 수 있다
   
-13. Security + Oauth 2.0
+13. Oauth 2.0
 - 인증과 리소스에 대한 권한부여 기능 -> OAuth
 - OAuth는 서버와 클라이언트 사이에 인증 완료하면 서버는 권한부여 결과로써 access token을 전송
 - 클라이언트는 access token을 이용해 접근 및 서비스를 요청 할 수 있다
@@ -885,10 +885,80 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - 전용 발급 절차 없이 미리 가지고 있을 수 있음
     - 권한 서버에만 활용되며 리소스 서버에는 전송되지 않음
 
+- OAuth
+  - 용어 및 개념
+    - User : Service Provider에 계정을 가지고 있으며, Consumer앱을 이용하려는 사용자
+    - Service Provider : OAuth를 사용하는 Open API를 제공하는 서비스
+    - Protected Resource : Service Provider로부터 제공되어지는 API 자원들
+    - Consumer : OAuth 인증을 사용해 Service Provider의 기능을 사용하려는 애플리케이션이나 웹 서비스
+    - Consumer Key : Consumer가 Service Provider에게 자신을 식별하는 데 사용하는 키
+    - Consumer Secret : Consumer Key의 소유권을 확립하기위해 Consumer가 사용하는 Secret
+    - Request Token : Consumer가 Service Provider에게 접근 권한을 인증받기 위해 사용하는 값, 인증 완료후에는 Access Token으로 교환
+    - Access Token : 인증 후 Consumer가 Service Provider의 자원에 접근하기 위한 키를 포함한 값
+    - Token Secret : 주어진 토큰의 소유권을 인증하기 위해 소비자가 사용하는 Secret
+  - OAuth의 WorkFlow
+  
+      ![ex_screenshot](/res/oauth2.png)
+    - Consumer는 Service Provider로부터 Client key, Client Secret을 발급 받고 Service Provider에 API 사용할 것을 등록하고 Service Provider가 Consumer를 식별할 수 있게 해줌
+    - Request Token 요청 시 Consumer의 정보, Signature 정보를 포함하여 Reqeust token 요청하고 발급받음
+    - Request token값 받은 후 Consumer는 User를 Service Provider에 인증 사이트로 다이렉트 시키고, 유저는 Service Provider에 유저임을 인증
+    - Consumer는 해당 유저가 인증되면 OAuth_token과 OAuth_cerifier를 넘겨준다
+    - Consumer는 OAuth_token && OAuth_verifier를 받은 후 signature를 만들어 Access Token을 요청
+    - Service Provider는 토큰과 서명들이 인증되었으면 Access Token을 Consumer에게 넘김
+    - Access Token 및 서명정보를 통해 Service Provider에 Protected Resource에 접근 할 수 있게됨
+  - OAutht 1.0과 2.0의 차이점
+    - 인증 절차 간소화 : 기능의 단순화, 규모 확장성 지원, 디지털 서명 기반 -> https에 맡김
+    - 용어 변경 : User -> Resource Owner ( 사용자)
+                  Protected Resource -> Resource Server (REST API 서버)
+                  Service Provider -> Authorization Server ( 인증 서버)
+                  Consumer -> Client (third party 애플리케이션)
+    - Resource Server와 Authorization Server 분리
+      - Authorization Server의 역할을 명확히 함      
 - 인증 종류
-- Authorization Code Grant
-  - 
+  - Authorization Code Grant
+    - 일반적인 웹사이트에서 소셜로그이과 같은 인증을 받을 때 활용되는 방식 
     
+    ![ex_screenshot](/res/acg.png)
+    1. 클라이언트가 Redirect URL을 포함하여 Authorization Servere 인증 요청
+    2. AuthorizationServer는 유저에게 로그인창을 제공하여 유저를 인증하게함.
+    3. AuthorizationServer는 Authorization code를 클라이언트에게 제공
+    4. Client는 코드를 Authorization Server에 Access Token을 요청
+    5. Authorization 서버는 클라이언트에게 Access Token을 발급
+    6. Access token을 이용하여 Resource server에 자원을 접근할 수 있게 된다
+    7. 토큰 만료후 refresh token을 이용하여 토큰을 재발급
+  - Implicit Grant
+    - Public Client인 브라우저 기반 애플리케이션이나 모바일 애플리케이션에서 바로 Resource Server에 접근하여 사용할 수 있는 방식
     
+    ![ex_screenshot](/res/oauth3.png)
+    1. 클라이언트는 Authorization server에 인증 요청
+    2. 유저는 Authorization server를 통해 인증
+    3. Authorization server는 Access token을 포함하여 클라이언트의 Redirect url을 호출
+    4. 클라이언트는 해당 Access token이 유요한지 Authoriziation server에 인증 요청
+    5. 인증서버는 토큰이 유효하다면 토큰의 만기시간과 함께 리턴
+    6. 클라이언트는 Resource server에 접근 가능
+  - Resource Owner Password Credentials Grant
+    - Client에 아이디/패스워드를 받아 직접 access token을 받아오는 방식
+    - Client가 확실한 신용이 보장될 때 사용할 수 있는 방식
     
+    ![ex_screenshot](/res/oauth4.png)
+    1. 유저가 ID, Password 입력
+    2. 클라이언트는 유저의 id, password와 클라이언트 정보를 넘김
+    3. Authorization server는 Access toekn을 넘김
+  - Client Credentials Grant
+    - 애플리케이션이 Confidential Client일 때 id, secret을 가지고 인증하는 방식
     
+    ![ex_screenshot](/res/oauth5.png)
+    1. 클라이언트 정보를 Authorization server에 넘김
+    2. Access Token을 Client에 전달
+  - Device Code Grant
+    - 브라우저가 없거나 입력이 제한된 장치에서 사용
+  - Refresh Token Grant
+    - 기존에 저장해둔 리프러시 토큰이 존재 시 access toekn 재발급 받을 필요가 있을 때 사용
+    - 기존 access token은 만료 
+    
+14.Spring security + JWT + Oauth2 
+- 기존 oauth2의 문제점
+  - api 호출 시마다 access token이 유효한지 실제 oauth 서버를 통해 검증
+  - oauth에서 해당 토큰 만료여부 등을 db에서 조회하고 새로 갱신 시 업데이트 수행
+  - oauth 서버에 상당한 부담을 준다
+  -> Claim 기반 토큰 사용하여 oauth서버의 부담을 줄여준다 (JWT)

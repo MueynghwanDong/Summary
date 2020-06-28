@@ -438,11 +438,22 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 5. Servlet & JSP
 
 - interceptor vs filter
-- WAS
-- Servlet vs JSP
+- WAS(Web Application Server)
+  - 동적인 웹 페이지를 구성할 때 사용
+- Servlet vs JSP 차어점
+- XML
+- ajax
 - Web Container
-- Servelt 2가지 형식
+  - 웹 서버 내부에서 Servlet 클래스 or JSP 파일을 실행하기 위한 실행 환경을 제공하는 역할 수행
+  - Servelt과 JSP 사용 웹 서버는 URL 주소의 해석을 맡아 주는 http 서버와 Servlet 클래스 or JSP 파일의 실행 요청을 처리해주는 웹 컨테이너로 구성
+- Servelt 2가지 형식 
+  - GenericServlet과 HttpServlet이 존재
 - Servlet life cycle
+  - 서버를 실행시키는 순간 서빌릿 생성자 호출
+  - 생성자 호출해서 객체가 생성되면 초기화 작업 수행
+  - 초기화 작업 이후 Service 메소드 호출
+    - Service 메소드는 클라이언트가 요청할 때 마다 호출
+  - 서버가 종료되는 시점 destroy 메소드 호출(서버 재시작시 자원 반납을 위해 호출)
 
 6. myBatis vs sequalize 
 - mybatis

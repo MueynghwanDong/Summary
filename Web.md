@@ -435,7 +435,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
       - View와 Model 사이 의존성이 없다
       - 각 부분이 독립적이기 때문에 모듈화 하여 개발 할 수 있다
       - View Model 설계가 쉽지 않다
-5. promise  
+5. Servlet & JSP
+
+- interceptor vs filter
+- WAS
+- Servlet vs JSP
+- Web Container
+- Servelt 2가지 형식
+- Servlet life cycle
 
 6. myBatis vs sequalize 
 - mybatis

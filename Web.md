@@ -435,25 +435,141 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
       - View와 Model 사이 의존성이 없다
       - 각 부분이 독립적이기 때문에 모듈화 하여 개발 할 수 있다
       - View Model 설계가 쉽지 않다
-5. Servlet & JSP
-
-- interceptor vs filter
-- WAS(Web Application Server)
-  - 동적인 웹 페이지를 구성할 때 사용
-- Servlet vs JSP 차어점
-- XML
+5. Web 관련 (Servlet...)
+- WAS 와 Web Server
+  - staic pages 
+    - Web Server는 파일 경로 이름을 받아 경로와 일치하는 file contents를 반환
+    - 항상 동일 페이지만 반환
+  - dynamic pages
+    - 인자의 내용에 맞게 동적인 contents 반환
+    - 웹 서버에 의해 실행되는 프로그램을 통해 만들어진 결과물
+  - Web Container
+    - 웹 서버 내부에서 Servlet 클래스 or JSP 파일을 실행하기 위한 실행 환경을 제공하는 역할 수행
+    - Servelt과 JSP 사용 웹 서버는 URL 주소의 해석을 맡아 주는 http 서버
+    - Servlet 클래스 or JSP 파일의 실행 요청을 처리해주는 웹 컨테이너로 구성
+  
+  ![ex_screenshot](/res/was.JPG)
+  - Web Server
+    - HTTP 프로토콜을 기반으로 하여 클라이언트의 요청을 서비스하는 기능 담당
+      1) 정적인 컨텐츠 제공, WAS를 거치지 않고 바로 자원 제공
+      2) 동적인 컨텐츠 제공을 위한 요청 전달
+         클라이언트의 요청을 WAS에 보내고, WAS 처리 결과를 클라이언트에 전달
+    - WebServer에서는 정적 컨텐츠만 처리하도록 기능을 분배하여 서버의 부담을 줄일 수 있다
+  - WAS
+    - DB 조회, 다양한 로직 처리를 요구하는 동적인 컨텐츠를 제공하기 위해 만들어진 Applicatioin Server
+    - HTTP를 통해 컴퓨터나 장치에 애플리케이션을 수행해주는 미들웨어
+    - Web Server 기능들을 구조적으로 분리해 처리하고자하는 목적으로 제시
+      - 분산 트랜잭션, 보안, 메시징, 쓰레드 처리 등 기능을 처리하는 분산 환겨에서 사용
+      - 주로 DB 서버와 같이 수행
+    - 프로그램 실행 환경과 DB 접속 기능 제공
+    - 여러개 트랜잭션 관리 기능 제공
+    - 업무 처리 비즈니스 로직 수행
+    - WAS를 요청에 맞는 데이터를 DB에서 가져와 비즈니스 로직에 맞게 결과를 만들어 제공함으로써 자원을 효율적으로 사용할 수 있다
+  - Web Service Architecture
+    ![ex_screenshot](/res/was2.JPG)
+    - 동작 과정
+    1) Web Server는 클라이언트로부터 HTTP 요청을 받음
+    2) Web Server는 요청을 WAS에 보냄
+    3) WAS는 관련 Servlete을 메모리에 올림
+    4) WAS는 web.xml 참조해 해당 Servlet에 대한 Thread 생성
+    5) HttpServletRequest와 HttpServletResponse 객체를 생성하여 Servlet에 전달
+      - Thread는 Servlet의 service 메서드 호출
+      - service 메서드는 요청에 맞게 doGet() or doPost() 메서드 호출
+    6) doGet() or doPost() 메서드는 인자에 맞게 생성된 적절한 동적 페이지를 Response 객체에 담아 WAS에 전달
+    7) WAS는 Response 객체를 HttpResponse 형태로 바꿔 Web Server에 전달
+    8) 생성된 Thread를 종료하고 HttpRequest, HttpResponse 객체 제거 
+  
+- Servlet && JSP
+  - Servlet : 클라이언트의 요청을 처리하고 결과를 다시 전송하는 Servlet 클래스의 구현 규칙을 지킨 자바 프로그래밍 기술
+    - 클라이언트 요청에 대해 동적으로 작동하는 웹 어플리케이션 컴포넌트
+    - html을 사용하여 요청에 응답
+    - Java Trhead를 이용하여 동작
+    - MVC 패턴에서 Controller로 이용
+    - HTTP 프로토콜 서비스를 지원하는 javax.servlet.http.HttpServlet 클래스를 상속받음
+    - HTML 변경 시 Servlet을 재컴파일 해야하는 단점 있음
+  - Servlet 동작 방식
+    ![ex_screenshot](/res/servlt.JPG)
+    1) 사용자가 URL 클릭하면 HTTP Request를 Servlet Container로 전송
+    2) HTTP Request를 전송받은 Servlet Container는 HttpServletRequest, HttpServletResponse 두 객체 생성
+    3) web.xml은 사용자가 요청한 URL을 분석해 어느 서블릿에 대한 요청인지 찾음
+    4) 해당 서블릿에서 service 메소드를 호출한 후 POST, GET여부에 따라 메소드 호출
+    5) 메소드는 동적 페이지 생성후 HttpServletResponse 객체에 응답을 보냄
+    6) 응답이 끝나면 HttpServletRequest, HttpServletResponse 두 객체 소멸
+  - Servlet Conatiner : 서블릿을 관리해주는 컨테이너
+    - 클라이언트 요청을 받아주고 응답할 수 있게, 웹 서버와 소켓을 만들ㄹ어 ㄹ통신
+    - 역할 
+      - 웹 서버와 통신 지원 
+      - 서블릿 생명주기 관리
+      - 멀티쓰레드 지원 및 관리
+      - 선언적인 보안 관리 
+  - Servlet 생명주기
+  
+    ![ex_screenshot](/res/servlet2.JPG)
+    - 클라이언트 요청 시 컨테이너는 해당 서블릿이 메모리에 있는지 확인하고 없을 경우 init() 메서드 호출하여 적재
+      init() 메서드는 처음 한번만 실행되며 서블릿의 쓰레드에서 공통적으로 사용해야하는 것이 있다면 오버라이딩하여 구현
+      실행 중 서블릿이 변경될 경우 기존 서블릿은 파괴하고 init()을 통해 새로운 내용을 다시 메모리에 적재
+    - init() 호출 후 클라이언트 요청에 따라 service 메서드를 통해 요청에 대한 응답이 doGet(), doPost()로 분기
+      서블릿 컨테이너가 클라이언트의 요청이 오면 가장 먼저 처리되는 과정으로 생성된 HttpServletRequest, HttpServletResponse에 의해 request, response 객체 제공
+    - 컨테이너가 서블릿에 요청을 종료하면 destory() 메소드를 호출, 한반면 실행되며 종료시 처리해야 하는 작업을 메서드에 오버라이딩하여 구현
+    
+  - JSP(Java Server Page)
+    - Java 언어를 기반으로 하는 ServerSide 스크립트 언어
+    - HTML 코드 속에 자바 코드를 넣어 동적인 웹 페이지를 생성하는 웹 어플리케이션 도구
+      - JSP를 토오해 정직인 HTML, 동적으로 생성된 contents를 혼합 사용할 수 있다
+    - <% 코드 %>, <%= 코드 =%>
+    - 내부 동작 과정
+      1) WAS는 내부적으로 jsp 파일을 JavaServlet(.java)으로 변환
+      2) WAS는 변환한 Servlet을 동작하여 필요 기능 수행
+      3) 수행 완료 후 생성된 데이터를 웹 페이지와 함께 클라이언트로 응답
+    - 특징 
+      - 스크립트 언어이기에 자바 기능을 그대로 사용
+      - Tomcat이 이미 만들어 놓은 객체를 사용
+      - 사용자 정의 태그를 사용하여, 효율적으로 웹 사이트를 구성할 수 있다 (JSTL)
+      - Servlet과 다르게 JSP는 수정된 경우 재배포 필요 없이 Tomacat이 알아서 처리
+    - JSP에서 동적인 코드를 호출하는 6가지 전략
+      1) Call Java code directly
+        - Java 코드를 직접 호출
+        - 모든 Java 코드를 JSP 페이지에 넣는다.
+        - 아주 적은 양의 코드에만 적합한 전략
+      2) Call Java code indirectly
+        - Java 코드를 간접적으로 호출
+        - 별도의 utility class(Java Class)를 작성한다.
+        - utility class를 호출하는 데 필요한 Java 코드만 JSP 페이지에 넣는다.
+      3) Use beans
+        - beans로 구조화된 별도의 utility class(Java Class)를 작성한다.
+        - jsp:useBean, jsp:getProperty, jsp:setProperty를 사용하여 utility class를 호출한다.
+      4) Use the MVC architecture
+        - MVC 아키텍처를 사용
+        - Servlet(Controller)이 요청에 응답하고 적절한 데이터를 검색하여 결과를 beans(Model)에 저장
+        - 이 결과를 JSP 페이지(View)로 전달하여 결과를 표시한다.
+        - JSP 페이지는 bean을 사용한다.
+      5) Use the JSP expression language
+        - shorthand syntax를 이용하여 간단하게 객체 속성(property)에 접근하고 출력한다.
+        - jsp:useBean, jsp:getProperty, jsp:setProperty를 expression language으로 간단하게 표현할 수 있다.
+        - 일반적으로 beans, MVC 패턴을 함께 사용한다.
+      6) Use custom tags
+        - tag handler class를 만든다.
+        - XML과 같은 사용자 정의 태그(custom tags)를 사용하여 태그 핸들러를 호출한다.
+    - JSTL(JSP Standard Tag Library)
+      - 많은 JSP 애플리케이션의 공통적인 핵심 기능을 캡슐화하는 유용한 JSP 태그 모음
+      - 가장 많이 사용하는 태그 확장 라이브러리
+      - 자신만의 Custom Tage 추가 기능 제공
+      - JSP에 Java Code가 들어가는 것을 막기 위해 사용된다(Java code 대신 Tag 사용)
+      - Core / Formatting tags / SQL tags / XML tags / JTML Fuctions
+      - taglib 지시어를 사용하여 JSP 페이지가 Custom 태그 집합을 사용한다고 선언
+      
 - ajax
-- Web Container
-  - 웹 서버 내부에서 Servlet 클래스 or JSP 파일을 실행하기 위한 실행 환경을 제공하는 역할 수행
-  - Servelt과 JSP 사용 웹 서버는 URL 주소의 해석을 맡아 주는 http 서버와 Servlet 클래스 or JSP 파일의 실행 요청을 처리해주는 웹 컨테이너로 구성
-- Servelt 2가지 형식 
-  - GenericServlet과 HttpServlet이 존재
+
+
 - Servlet life cycle
   - 서버를 실행시키는 순간 서빌릿 생성자 호출
   - 생성자 호출해서 객체가 생성되면 초기화 작업 수행
   - 초기화 작업 이후 Service 메소드 호출
     - Service 메소드는 클라이언트가 요청할 때 마다 호출
   - 서버가 종료되는 시점 destroy 메소드 호출(서버 재시작시 자원 반납을 위해 호출)
+
+- interceptor vs filter
+- Jquery
 
 6. myBatis vs sequalize 
 - mybatis

@@ -448,7 +448,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - Servelt과 JSP 사용 웹 서버는 URL 주소의 해석을 맡아 주는 http 서버
     - Servlet 클래스 or JSP 파일의 실행 요청을 처리해주는 웹 컨테이너로 구성
   
-  ![ex_screenshot](/res/was.JPG)
+  ![ex_screenshot](/res/was.png)
   - Web Server
     - HTTP 프로토콜을 기반으로 하여 클라이언트의 요청을 서비스하는 기능 담당
       1) 정적인 컨텐츠 제공, WAS를 거치지 않고 바로 자원 제공
@@ -466,7 +466,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - 업무 처리 비즈니스 로직 수행
     - WAS를 요청에 맞는 데이터를 DB에서 가져와 비즈니스 로직에 맞게 결과를 만들어 제공함으로써 자원을 효율적으로 사용할 수 있다
   - Web Service Architecture
-    ![ex_screenshot](/res/was2.JPG)
+    ![ex_screenshot](/res/was2.png)
     - 동작 과정
     1) Web Server는 클라이언트로부터 HTTP 요청을 받음
     2) Web Server는 요청을 WAS에 보냄
@@ -488,7 +488,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - HTTP 프로토콜 서비스를 지원하는 javax.servlet.http.HttpServlet 클래스를 상속받음
     - HTML 변경 시 Servlet을 재컴파일 해야하는 단점 있음
   - Servlet 동작 방식
-    ![ex_screenshot](/res/servlt.JPG)
+    ![ex_screenshot](/res/servlt.png)
     1) 사용자가 URL 클릭하면 HTTP Request를 Servlet Container로 전송
     2) HTTP Request를 전송받은 Servlet Container는 HttpServletRequest, HttpServletResponse 두 객체 생성
     3) web.xml은 사용자가 요청한 URL을 분석해 어느 서블릿에 대한 요청인지 찾음
@@ -504,7 +504,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
       - 선언적인 보안 관리 
   - Servlet 생명주기
   
-    ![ex_screenshot](/res/servlet2.JPG)
+    ![ex_screenshot](/res/servlet2.png)
     - 클라이언트 요청 시 컨테이너는 해당 서블릿이 메모리에 있는지 확인하고 없을 경우 init() 메서드 호출하여 적재
       init() 메서드는 처음 한번만 실행되며 서블릿의 쓰레드에서 공통적으로 사용해야하는 것이 있다면 오버라이딩하여 구현
       실행 중 서블릿이 변경될 경우 기존 서블릿은 파괴하고 init()을 통해 새로운 내용을 다시 메모리에 적재

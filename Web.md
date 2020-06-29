@@ -511,7 +511,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - init() 호출 후 클라이언트 요청에 따라 service 메서드를 통해 요청에 대한 응답이 doGet(), doPost()로 분기
       서블릿 컨테이너가 클라이언트의 요청이 오면 가장 먼저 처리되는 과정으로 생성된 HttpServletRequest, HttpServletResponse에 의해 request, response 객체 제공
     - 컨테이너가 서블릿에 요청을 종료하면 destory() 메소드를 호출, 한반면 실행되며 종료시 처리해야 하는 작업을 메서드에 오버라이딩하여 구현
-    
+   - Servlet life cycle
+    - 서버를 실행시키는 순간 서빌릿 생성자 호출
+    - 생성자 호출해서 객체가 생성되면 초기화 작업 수행
+    - 초기화 작업 이후 Service 메소드 호출
+      - Service 메소드는 클라이언트가 요청할 때 마다 호출
+    - 서버가 종료되는 시점 destroy 메소드 호출(서버 재시작시 자원 반납을 위해 호출)
   - JSP(Java Server Page)
     - Java 언어를 기반으로 하는 ServerSide 스크립트 언어
     - HTML 코드 속에 자바 코드를 넣어 동적인 웹 페이지를 생성하는 웹 어플리케이션 도구
@@ -558,18 +563,22 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
       - Core / Formatting tags / SQL tags / XML tags / JTML Fuctions
       - taglib 지시어를 사용하여 JSP 페이지가 Custom 태그 집합을 사용한다고 선언
       
-- ajax
-
-
-- Servlet life cycle
-  - 서버를 실행시키는 순간 서빌릿 생성자 호출
-  - 생성자 호출해서 객체가 생성되면 초기화 작업 수행
-  - 초기화 작업 이후 Service 메소드 호출
-    - Service 메소드는 클라이언트가 요청할 때 마다 호출
-  - 서버가 종료되는 시점 destroy 메소드 호출(서버 재시작시 자원 반납을 위해 호출)
-
-- interceptor vs filter
+- Ajax : JavaScript의 라이브러리중 하나이며 Asynchronous Javascript And Xml(비동기식 자바스크립트와 xml)
+  - 브라우저가 가지고있는 XMLHttpRequest 객체를 이용해서 전체 페이지를 새로 고치지 않고도 페이지의 일부만을 위한 데이터를 로드하는 기법
+  - JavaScript를 사용한 비동기 통신, 클라이언트와 서버간에 XML 데이터를 주고받는 기술
+  - Json이나 xml 형태로 필요 데이터만 받아 갱신하기에 자원과 시간을 절약할 수 있다
+  - 장단점
+    1. 웹페이지의 속도향상
+    2. 서버의 처리가 완료 될때까지 기다리지 않고 처리 가능
+    3. 서버에서 Data만 전송해면 되므로 전체적인 코딩의 양이 줄어듬
+    4. 기존 웹에서는 불가능했던 다양한 UI를 가능하게 해준다
+    
+    1. 히스토리 관리가 안 된다. (보안에 좀 더 신경을 써야한다.)
+    2. 연속으로 데이터를 요청하면 서버 부하가 증가할 수 있다
+    3. XMLHttpRequest를 통해 통신을 하는 경우사용자에게 아무런 진행 정보가 주어지지 않는다
+    
 - Jquery
+- interceptor vs filter
 
 6. myBatis vs sequalize 
 - mybatis

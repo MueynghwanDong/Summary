@@ -448,7 +448,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - Servelt과 JSP 사용 웹 서버는 URL 주소의 해석을 맡아 주는 http 서버
     - Servlet 클래스 or JSP 파일의 실행 요청을 처리해주는 웹 컨테이너로 구성
   
-  ![ex_screenshot](/res/was.JPG)
+  ![ex_screenshot](/res/was.png)
   - Web Server
     - HTTP 프로토콜을 기반으로 하여 클라이언트의 요청을 서비스하는 기능 담당
       1) 정적인 컨텐츠 제공, WAS를 거치지 않고 바로 자원 제공
@@ -466,18 +466,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - 업무 처리 비즈니스 로직 수행
     - WAS를 요청에 맞는 데이터를 DB에서 가져와 비즈니스 로직에 맞게 결과를 만들어 제공함으로써 자원을 효율적으로 사용할 수 있다
   - Web Service Architecture
-    ![ex_screenshot](/res/was2.JPG)
+    ![ex_screenshot](/res/was2.png)
     - 동작 과정
-    1) Web Server는 클라이언트로부터 HTTP 요청을 받음
-    2) Web Server는 요청을 WAS에 보냄
-    3) WAS는 관련 Servlete을 메모리에 올림
-    4) WAS는 web.xml 참조해 해당 Servlet에 대한 Thread 생성
-    5) HttpServletRequest와 HttpServletResponse 객체를 생성하여 Servlet에 전달
-      - Thread는 Servlet의 service 메서드 호출
-      - service 메서드는 요청에 맞게 doGet() or doPost() 메서드 호출
-    6) doGet() or doPost() 메서드는 인자에 맞게 생성된 적절한 동적 페이지를 Response 객체에 담아 WAS에 전달
-    7) WAS는 Response 객체를 HttpResponse 형태로 바꿔 Web Server에 전달
-    8) 생성된 Thread를 종료하고 HttpRequest, HttpResponse 객체 제거 
+      1) Web Server는 클라이언트로부터 HTTP 요청을 받음
+      2) Web Server는 요청을 WAS에 보냄
+      3) WAS는 관련 Servlete을 메모리에 올림
+      4) WAS는 web.xml 참조해 해당 Servlet에 대한 Thread 생성
+      5) HttpServletRequest와 HttpServletResponse 객체를 생성하여 Servlet에 전달
+        - Thread는 Servlet의 service 메서드 호출
+        - service 메서드는 요청에 맞게 doGet() or doPost() 메서드 호출
+      6) doGet() or doPost() 메서드는 인자에 맞게 생성된 적절한 동적 페이지를 Response 객체에 담아 WAS에 전달
+      7) WAS는 Response 객체를 HttpResponse 형태로 바꿔 Web Server에 전달
+      8) 생성된 Thread를 종료하고 HttpRequest, HttpResponse 객체 제거 
   
 - Servlet && JSP
   - Servlet : 클라이언트의 요청을 처리하고 결과를 다시 전송하는 Servlet 클래스의 구현 규칙을 지킨 자바 프로그래밍 기술
@@ -488,7 +488,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     - HTTP 프로토콜 서비스를 지원하는 javax.servlet.http.HttpServlet 클래스를 상속받음
     - HTML 변경 시 Servlet을 재컴파일 해야하는 단점 있음
   - Servlet 동작 방식
-    ![ex_screenshot](/res/servlt.JPG)
+    ![ex_screenshot](/res/servlt.png)
     1) 사용자가 URL 클릭하면 HTTP Request를 Servlet Container로 전송
     2) HTTP Request를 전송받은 Servlet Container는 HttpServletRequest, HttpServletResponse 두 객체 생성
     3) web.xml은 사용자가 요청한 URL을 분석해 어느 서블릿에 대한 요청인지 찾음
@@ -504,7 +504,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
       - 선언적인 보안 관리 
   - Servlet 생명주기
   
-    ![ex_screenshot](/res/servlet2.JPG)
+    ![ex_screenshot](/res/servlet2.png)
     - 클라이언트 요청 시 컨테이너는 해당 서블릿이 메모리에 있는지 확인하고 없을 경우 init() 메서드 호출하여 적재
       init() 메서드는 처음 한번만 실행되며 서블릿의 쓰레드에서 공통적으로 사용해야하는 것이 있다면 오버라이딩하여 구현
       실행 중 서블릿이 변경될 경우 기존 서블릿은 파괴하고 init()을 통해 새로운 내용을 다시 메모리에 적재
@@ -532,29 +532,29 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
       - 사용자 정의 태그를 사용하여, 효율적으로 웹 사이트를 구성할 수 있다 (JSTL)
       - Servlet과 다르게 JSP는 수정된 경우 재배포 필요 없이 Tomacat이 알아서 처리
     - JSP에서 동적인 코드를 호출하는 6가지 전략
-      1) Call Java code directly
-        - Java 코드를 직접 호출
-        - 모든 Java 코드를 JSP 페이지에 넣는다.
-        - 아주 적은 양의 코드에만 적합한 전략
-      2) Call Java code indirectly
-        - Java 코드를 간접적으로 호출
-        - 별도의 utility class(Java Class)를 작성한다.
-        - utility class를 호출하는 데 필요한 Java 코드만 JSP 페이지에 넣는다.
-      3) Use beans
-        - beans로 구조화된 별도의 utility class(Java Class)를 작성한다.
-        - jsp:useBean, jsp:getProperty, jsp:setProperty를 사용하여 utility class를 호출한다.
-      4) Use the MVC architecture
-        - MVC 아키텍처를 사용
-        - Servlet(Controller)이 요청에 응답하고 적절한 데이터를 검색하여 결과를 beans(Model)에 저장
-        - 이 결과를 JSP 페이지(View)로 전달하여 결과를 표시한다.
-        - JSP 페이지는 bean을 사용한다.
-      5) Use the JSP expression language
-        - shorthand syntax를 이용하여 간단하게 객체 속성(property)에 접근하고 출력한다.
-        - jsp:useBean, jsp:getProperty, jsp:setProperty를 expression language으로 간단하게 표현할 수 있다.
-        - 일반적으로 beans, MVC 패턴을 함께 사용한다.
-      6) Use custom tags
-        - tag handler class를 만든다.
-        - XML과 같은 사용자 정의 태그(custom tags)를 사용하여 태그 핸들러를 호출한다.
+        1) Call Java code directly
+          - Java 코드를 직접 호출
+          - 모든 Java 코드를 JSP 페이지에 넣는다.
+          - 아주 적은 양의 코드에만 적합한 전략
+        2) Call Java code indirectly
+          - Java 코드를 간접적으로 호출
+          - 별도의 utility class(Java Class)를 작성한다.
+          - utility class를 호출하는 데 필요한 Java 코드만 JSP 페이지에 넣는다.
+        3) Use beans
+          - beans로 구조화된 별도의 utility class(Java Class)를 작성한다.
+          - jsp:useBean, jsp:getProperty, jsp:setProperty를 사용하여 utility class를 호출한다.
+        4) Use the MVC architecture
+          - MVC 아키텍처를 사용
+          - Servlet(Controller)이 요청에 응답하고 적절한 데이터를 검색하여 결과를 beans(Model)에 저장
+          - 이 결과를 JSP 페이지(View)로 전달하여 결과를 표시한다.
+          - JSP 페이지는 bean을 사용한다.
+        5) Use the JSP expression language
+          - shorthand syntax를 이용하여 간단하게 객체 속성(property)에 접근하고 출력한다.
+          - jsp:useBean, jsp:getProperty, jsp:setProperty를 expression language으로 간단하게 표현할 수 있다.
+          - 일반적으로 beans, MVC 패턴을 함께 사용한다.
+        6) Use custom tags
+          - tag handler class를 만든다.
+          - XML과 같은 사용자 정의 태그(custom tags)를 사용하여 태그 핸들러를 호출한다.
     - JSTL(JSP Standard Tag Library)
       - 많은 JSP 애플리케이션의 공통적인 핵심 기능을 캡슐화하는 유용한 JSP 태그 모음
       - 가장 많이 사용하는 태그 확장 라이브러리
@@ -578,7 +578,40 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
     3. XMLHttpRequest를 통해 통신을 하는 경우사용자에게 아무런 진행 정보가 주어지지 않는다
     
 - Jquery
-- interceptor vs filter
+  - JavaScript의 생산성을 향상시켜주는 JavaScript 라이브러리
+  - 특징
+    - Element를 선택하기 쉽게 할 수 있다
+    - 선택된 Element들을 효율적으로 제어할 수 있다
+    - JavaScript로 만들어진 라이브러리
+  - 사용방법
+    - 직접 서비스 하는 방법
+    - 구글의 자바스크립트 라이브러리를 사용하는 경우
+  - min 파일 : 압축 파일로 저사양 컴퓨터나 네트워크가 느린 사용자가 사용하는 것이 좋다
+  - 기본 파일 : 개발하는데 jquery 사용에 문제가 있을 경우, 완전한 코드의 형태를 필요로 할 수 있기 때문에 압축되지 않은 파일을 사용할 수 있다.
+  - $로 시작하며 javascript 사용 시보다 생산성이 높아진다
+  - jQuery Wrapper : jQuery라는 이름을 가진 함수를 호출하는것
+    - 인자로 Elemnt Object를 전달하거나 문자열로 된 CSS Style Selctor를 전달
+    - Element Object : document.getElementById로 인자 전달시 return 받는 객체
+    - CSS style Selector
+      - ID Selector : # 
+      - Class Selector : .
+    - $와 jQuery는 같은 의미지만, $ 사용하는 다른 라이브러리와 충돌 때문에 jQuery 이름과 함수를 만들어 사용하는 방법을 통해 충돌을 방지
+  - jQuery Chain
+    - jQuery 메소드들은 반환값으로 자기자신(Wrapper의 오브젝트, 메서드가 제어했던 대상)을 반환해야하는 규칙을 가짐
+    - 한번 선택한 대상에 대해 연속적인 제어를 할 수 있음 -> Chain
+    - 코드가 간결해진다
+  - jQuery Traversing 
+    - Chain Context를 유지하며 제어 대상이되는 Element를 변경하는 기법
+    - 하나의 context에서 필요에 따라 제어하고자 하는 대상을 변경할 수 있어 해당 chain context를 유지하며 코딩 가능 -> 경제적이고 작업 흐름의 연속적으로 활용
+  - jQuery Event  
+    - 크로스브라우징 문제를 해결해준다
+    - bind로 이벤트 핸들러 설치하고 unbind로 제거
+    - trigger로 이벤트 핸들러 강제로 실행
+    - click, ready와 같이 다양한 이벤트 헬퍼를 제공
+    - live를 이용하면 현재 존재하지 않은 엘리먼트에 이벤트 핸들러 설치 가능
+  - jQuery Animation
+    - javascript와 CSS를 이용해 HTML Element에 동적 효과를 줄 수 있다
+    - jQuery의 효과 메서드를 호출
 
 6. myBatis vs sequalize 
 - mybatis
@@ -1115,3 +1148,33 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
   - oauth에서 해당 토큰 만료여부 등을 db에서 조회하고 새로 갱신 시 업데이트 수행
   - oauth 서버에 상당한 부담을 준다
   -> Claim 기반 토큰 사용하여 oauth서버의 부담을 줄여준다 (JWT)
+
+15. interceptor vs filter vs AOP
+  ![ex_screenshot](/res/interceptorvsfilter.jpg)
+  - Filter : dispatcherServlet으로 요청이 가기전 실행
+  - Interceptor : Controller로 요청이 가기전 실행
+  - 주로 전역적으로 무언가 처리해야하는 로직은 필터로 구현(인코딩 및 보안 관련) 디테일한 처리는 인터셉터로 구현(인증, 권한)
+  
+  ![ex_screenshot](/res/aop.png)
+  - Interceptor와 Filter는 Servlet 단위에서 실행, AOP는 메소드 앞 Proxy 패턴 형태로 실행
+  - 요청 시 Filter - Interceptor - AOP - Intercpetor - Filter 순을 거치게 됨
+  
+interceptor
+- DispatcherServlet에서 Handler(Controller)로 가기전 정보 처리
+- SpringFramework에서 자체적으로 제공하는 기능
+- 요청에 대한 작업 전/후로 가로챈다
+- Spring Context 내부에서 Controller에 관한 요청과 응답에 대해 처리
+- 스프링의 모든 빈 객체에 접근 가능
+
+Filter
+- DispatcherServlet 앞단에서 정보처리
+- J2EE 표준 스펙에 정의되어 있는 기능
+- 자원의 앞단에서 요청을 변경하거나 여러가지 체크를 수행, 자원 처리 후 응답내용에 대해 변경하는 처리 수행 가능
+- web.xml에 등록하고 일반적으로 인코딩 변환처리, XSS방어 등의 요청에 대한 처리로 사용
+
+AOP
+- OOP를 보완하기 위해 나온 개념
+- 주로 로깅, 트랜잭션, 에러 처리 등 비즈니스단의 메서드에서 세밀하게 조정하고 싶을 때 사용
+- 메서드 전후 지점에서 자유롭게 설정 가능
+- 주소, 파라미터, 애노테이션 등 다양한 방법으로 대상 지정 가능
+- Advice는 JointPoint나 ProceedingJointPoint 등 활용하여 호출

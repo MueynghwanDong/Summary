@@ -524,7 +524,8 @@
                
   - 다이내믹 SQL
     - 온라인 응용을 실행 시간에 구성할 수 있는 삽입 SQL
-      - varchar dynamicSQL[256];                        
+		<pre><code>
+      	varchar dynamicSQL[256];                        
 					=> 문자 스트링 변수로 SQL문을 저장함
 					
         dynamicSQL = “DELETE FROM ENROL 
@@ -534,7 +535,8 @@
 					
         EXEC SQL EXECUTE objSQL;                         
 					=> objSQL에 자장된 목적 코드의 SQL문을 실행
-					
+		</code></pre>
+		
       - PREPARE문과 EXECUTE문을 하나의 IMMEDIATE문으로 표현 가능
         - EXEC SQL EXECUTE IMMEDIATE :dynamicSQL;
         
@@ -547,5 +549,5 @@
 								
         EXEC SQL EXECUTE objSQL USING :cno, :grade;         
          	=> ?를 가진 매개변수가 포함된 명령문 실행 시 USING절을 가진 EXECUTE 문에 이자 값을 명세한다.
-
+		
 7. 데이터 종속성과 정규화

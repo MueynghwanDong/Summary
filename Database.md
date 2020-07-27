@@ -214,167 +214,168 @@
   - 도메인 관계 해석
 
 6. SQL
-1) SQL 데이터 정의문 
-- 스키마와 카탈로그 
-  - SQL 스키마 : 스키마 이름을 식별되고 허가권자와 스키마의 각 요소에 대한 기술자 포함
-    - 테이블, 뷰, 도메인, 기타 허가권이나 무결성 등에 관한 요소 포함
-    - CREATE SCHEMA UNIVERSITY AUTHORIZATION SHLEE; -> 이름이 UNIVERSITY이고 허가권자가 SHLEE인 스키마 생성
-  - 카탈로그 : 한 SQL 시스템 내의 스키마들의 집합 
-    - 각 카탈로그는 반드시 INFORMATION_SCHEMA라는 스키마를 포함하며 카탈로그에 포함된 모든 스키마들의 정보와 스키마들의 모든 요소들에 대한 정보를 제공하기 위한 것
-- 도메인 정의문   
-  - SQL이 지원하는 데이터 타입으로만 정의
-  - CREATE DOMAIN 도메인_이름 데이타 타입
-                  [기정_값_정의]                => DEFAULT 값 OR NULL
-                  [도메인_제약조건_정의리스트]   => 무결성 제약 조건, CONSTRAINT, CHECK로 명세
-  - EX) CREATE DOMAIN DEPT CHAR(4)
-               DEFAULT '???'
-               CONSTRAINT VALID_DEPT
-               CHECK( VALUE INT
-                 ('COMP', 'ME', 'EE','ARCH','???'));
-  - ALTER DOMAIN 으로 변경 가능 -> 도메인 수정
-  - DROP DOMAIN 도메인_이름 옵션; -> 도메인 삭제
-    - 옵션 RESTRICT : 이 도메인을 참조하고 있는 것이 없을 때만 삭제
-    - CASCADE : 도메인을 참조하고 있는 뷰나 제약조건도 함께 삭제되지만 참조 열은 삭제되지 않고 다른 형태의 타입으로 변경
-- 기본 테이블 생성
-  - 기본 테이블 : CREATE TABLE로 만들어지는 테이블로 독자적으로 존재하는 테이블
-  - 가상 테이블 : CREATE VIEW로 만들어지는 테이블로 독자적 존재 불가, 기본 테이블로 유도되어 만들어 지는 테이블
-  - 임시 테이블 : 질의문 처리 과정의 중간 결과로 만들어 지는 테이블
-  - CREATE TABLE 기본 테이블 
-           ({열_이름 데이타 타입 [NOT NULL] [DEFAULT 값],}+    => [] 생략 가능, {} 중복 가능 '+'는 1번 이상, * 는 0번 이상
-           [PRIMARY KEY(열_이름_리스트),]                     => 기본키 명세, 개체 무결성 정의
-           {[UNIQUE (열_이름_리스트).]}                       => 대체키(후보키 명세)
-           {[FOREIGN KEY(열_이름_리스트)
-                REFERENCES 기본테이블[(열_이름_리스트)]
-                [ON DELETE 옵션]
-                [ON UPDATE 옵션],]}*
-                [CONSTRAINT 이름] [CHECK(조건식)]);          => 외래키로 참조 무결성 유지
-                                                               옵션 NO ACTION, CASCADE, SET NULL, SET DEFAULT
-                                                               CHECK절은 행 갱신, 삽입 시 유지되어야 할 무결성 제약 조건
-  - CREATE TABLE ENROL
-      (Sno INT NOT NULL,
-       Cno CHAR(6) NOT NULL,
-       Grade INT,
-       PRIMARY KEY(Sno, Cno),
-       FOREIGN KEY(Sno) REFERENCES STUDENT(Sno)
-              ON DELETE CASCADE
-              ON UPDATE CASCADE,
-       FOGEIGN KEY(Cno) RREFERENCES COURSE 
-              ON DELETE CASCADE
-              ON UPDATE CASCADE,
-       CHECK(Grade>=0 AND Grade<=100));
-       
-- 기본 테이블 제거와 변경 
-  - DROP TABLE COURSE CASCADE;
-    - CASCADE : 참조하는 다른 뷰 정의, 제약조거너이 있으면 함께 자동 삭제
-    - RESTRICT : 다른 뷰 정의에서나 조약조건에서 참조되고 있는 경우 실행되지 않음
-  - DROP SCHEMA UNIVERSITY CASCADE;
-    - CASCADE : 스키마뿐 아니라 연관 객체들 모두 삭제
-    - RESTRICT : 스키마가 공백인 경우에만 삭제
-  - ALTER TABLE ENROL ADD Final CHAR DEFAULT 'F';
-  - ALTER TABLE ENROL ALTER Grade SET DEFAULT '0'; -> 기정 값 변경
-  - DROP CONSTRAINT 이름 -> 제약 조건 삭제
-2) SQL 데이타 조작문
-- 데이타 갬색
-  - SELECT [ALL|DISTINCT] 열_리스트
-    FROM 테이블_리스트
-    [WHERE 조건]
-    [GROUP BY 열_리스트]
-    [HAVING 조건]
-    [ORDER BY 열_리스트] ASC|DESC]];
+- 1) SQL 데이터 정의문 
+  - 스키마와 카탈로그 
+    - SQL 스키마 : 스키마 이름을 식별되고 허가권자와 스키마의 각 요소에 대한 기술자 포함
+      - 테이블, 뷰, 도메인, 기타 허가권이나 무결성 등에 관한 요소 포함
+      - CREATE SCHEMA UNIVERSITY AUTHORIZATION SHLEE; -> 이름이 UNIVERSITY이고 허가권자가 SHLEE인 스키마 생성
+    - 카탈로그 : 한 SQL 시스템 내의 스키마들의 집합 
+      - 각 카탈로그는 반드시 INFORMATION_SCHEMA라는 스키마를 포함하며 카탈로그에 포함된 모든 스키마들의 정보와 스키마들의 모든 요소들에 대한 정보를 제공하기 위한 것
+  - 도메인 정의문   
+    - SQL이 지원하는 데이터 타입으로만 정의
+    - CREATE DOMAIN 도메인_이름 데이타 타입
+                    [기정_값_정의]                => DEFAULT 값 OR NULL
+                    [도메인_제약조건_정의리스트]   => 무결성 제약 조건, CONSTRAINT, CHECK로 명세
+    - EX) CREATE DOMAIN DEPT CHAR(4)
+                 DEFAULT '???'
+                 CONSTRAINT VALID_DEPT
+                 CHECK( VALUE INT
+                   ('COMP', 'ME', 'EE','ARCH','???'));
+    - ALTER DOMAIN 으로 변경 가능 -> 도메인 수정
+    - DROP DOMAIN 도메인_이름 옵션; -> 도메인 삭제
+      - 옵션 RESTRICT : 이 도메인을 참조하고 있는 것이 없을 때만 삭제
+      - CASCADE : 도메인을 참조하고 있는 뷰나 제약조건도 함께 삭제되지만 참조 열은 삭제되지 않고 다른 형태의 타입으로 변경
+  - 기본 테이블 생성
+    - 기본 테이블 : CREATE TABLE로 만들어지는 테이블로 독자적으로 존재하는 테이블
+    - 가상 테이블 : CREATE VIEW로 만들어지는 테이블로 독자적 존재 불가, 기본 테이블로 유도되어 만들어 지는 테이블
+    - 임시 테이블 : 질의문 처리 과정의 중간 결과로 만들어 지는 테이블
+    - CREATE TABLE 기본 테이블 
+             ({열_이름 데이타 타입 [NOT NULL] [DEFAULT 값],}+    => [] 생략 가능, {} 중복 가능 '+'는 1번 이상, * 는 0번 이상
+             [PRIMARY KEY(열_이름_리스트),]                     => 기본키 명세, 개체 무결성 정의
+             {[UNIQUE (열_이름_리스트).]}                       => 대체키(후보키 명세)
+             {[FOREIGN KEY(열_이름_리스트)
+                  REFERENCES 기본테이블[(열_이름_리스트)]
+                  [ON DELETE 옵션]
+                  [ON UPDATE 옵션],]}*
+                  [CONSTRAINT 이름] [CHECK(조건식)]);          => 외래키로 참조 무결성 유지
+                                                                 옵션 NO ACTION, CASCADE, SET NULL, SET DEFAULT
+                                                                 CHECK절은 행 갱신, 삽입 시 유지되어야 할 무결성 제약 조건
+    - CREATE TABLE ENROL
+        (Sno INT NOT NULL,
+         Cno CHAR(6) NOT NULL,
+         Grade INT,
+         PRIMARY KEY(Sno, Cno),
+         FOREIGN KEY(Sno) REFERENCES STUDENT(Sno)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE,
+         FOGEIGN KEY(Cno) RREFERENCES COURSE 
+                ON DELETE CASCADE
+                ON UPDATE CASCADE,
+         CHECK(Grade>=0 AND Grade<=100));
+         
+  - 기본 테이블 제거와 변경 
+    - DROP TABLE COURSE CASCADE;
+      - CASCADE : 참조하는 다른 뷰 정의, 제약조거너이 있으면 함께 자동 삭제
+      - RESTRICT : 다른 뷰 정의에서나 조약조건에서 참조되고 있는 경우 실행되지 않음
+    - DROP SCHEMA UNIVERSITY CASCADE;
+      - CASCADE : 스키마뿐 아니라 연관 객체들 모두 삭제
+      - RESTRICT : 스키마가 공백인 경우에만 삭제
+    - ALTER TABLE ENROL ADD Final CHAR DEFAULT 'F';
+    - ALTER TABLE ENROL ALTER Grade SET DEFAULT '0'; -> 기정 값 변경
+    - DROP CONSTRAINT 이름 -> 제약 조건 삭제
+- 2) SQL 데이타 조작문
+  - 데이타 갬색
+    - SELECT [ALL|DISTINCT] 열_리스트
+      FROM 테이블_리스트
+      [WHERE 조건]
+      [GROUP BY 열_리스트]
+      [HAVING 조건]
+      [ORDER BY 열_리스트] ASC|DESC]];
     
-  - SELECT Sno AS 학번, '중간시험 =' AS 시험, Midtern+3 AS 점수
-    FROM ENROL
-    WHERE Cno='c312';
-    
-    SELECT S.Sname, S.Dept, E.Grade
-    FROM STUDENT S, ENROL E
-    WHERE S.Sno = E.Sno and E.Cno = 'C413';
-    
-  - 조인 조건의 3가지 형식
-    - 테이블1 JOIN 테이블2 ON 조건식
-    - 테이블1 JOIN 테이블2 USING(열_리스트)
-    - 테이블1 NATURAL JOIN 테이블2
-    
-    - SELECT Sname, Dept, Grde
-      1)FROM STUDNET JOIN ENROL ON(STUDENT.Sno = ENROL.Sno)
-      2)FROM STUDNET JOIN ENROL USING(Sno)
-      3)FROM STUDNET NATURAL JOIN ENROL
-      WHERE ENROL.Cno ='C413;
-  - GROUP BY 이용 검색 
-    - SELECT Cno, AVG(Final) AS 기말평균
+    - SELECT Sno AS 학번, '중간시험 =' AS 시험, Midtern+3 AS 점수
       FROM ENROL
-      GROUP BY Cno                       => GROUP BY 절에 명세된 열의 값에 따라 그룹으로 분할 
-      HAVING COUNT(*)>=3                 => 각 그룹의 구성 요건 명세 
-  - Subquery 사용 검색
-    - SELECT Sname 
-      FROM STUDENT 
-      WHERE Sno IN (SELECT Sno FROM ENROL WHERE Cno =’C413’);
-    - SELECT Sname 
-      FROM STUDENT 
-      WHERE Sno NOT IN (SELECT Sno FROM ENROL WHERE Cno =’C413’);
-    - SELECT Sname, Dept 
-      FROM STUDENT 
-      WHERE Dept = (SELECT Dept FROM STUDENT WHERE Sname =’정기태‘); 
-  - Like 사용 검색
-    - SELECT Cno, Cname 
-      FROM COURSE
-      WHERE Cno LIKE ‘C%’;
-    - LIKE 프레디킷은 서브 스트링 패턴을 비교하는 비교 연산자 
-      - %는 서브 스트링 패턴을 명세 
-      - C% -> C로 시작, S__ -> S로 시작 세문자 스트링, LIKE '$S$' -> S포함 스트링
-  - NULL 사용 검색
-    - SELECT Sno, Sname
+      WHERE Cno='c312';
+      
+      SELECT S.Sname, S.Dept, E.Grade
+      FROM STUDENT S, ENROL E
+      WHERE S.Sno = E.Sno and E.Cno = 'C413';
+      
+    - 조인 조건의 3가지 형식
+      - 테이블1 JOIN 테이블2 ON 조건식
+      - 테이블1 JOIN 테이블2 USING(열_리스트)
+      - 테이블1 NATURAL JOIN 테이블2
+    
+      - SELECT Sname, Dept, Grde
+        1)FROM STUDNET JOIN ENROL ON(STUDENT.Sno = ENROL.Sno)
+        2)FROM STUDNET JOIN ENROL USING(Sno)
+        3)FROM STUDNET NATURAL JOIN ENROL
+        WHERE ENROL.Cno ='C413;
+    - GROUP BY 이용 검색 
+      - SELECT Cno, AVG(Final) AS 기말평균
+        FROM ENROL
+        GROUP BY Cno                       => GROUP BY 절에 명세된 열의 값에 따라 그룹으로 분할 
+        HAVING COUNT(*)>=3                 => 각 그룹의 구성 요건 명세 
+    - Subquery 사용 검색
+      - SELECT Sname 
+        FROM STUDENT 
+        WHERE Sno IN (SELECT Sno FROM ENROL WHERE Cno =’C413’);
+      - SELECT Sname 
+        FROM STUDENT 
+        WHERE Sno NOT IN (SELECT Sno FROM ENROL WHERE Cno =’C413’);
+      - SELECT Sname, Dept 
+        FROM STUDENT 
+        WHERE Dept = (SELECT Dept FROM STUDENT WHERE Sname =’정기태‘); 
+    - Like 사용 검색
+      - SELECT Cno, Cname 
+        FROM COURSE
+        WHERE Cno LIKE ‘C%’;
+      - LIKE 프레디킷은 서브 스트링 패턴을 비교하는 비교 연산자 
+        - %는 서브 스트링 패턴을 명세 
+        - C% -> C로 시작, S__ -> S로 시작 세문자 스트링, LIKE '$S$' -> S포함 스트링
+    - NULL 사용 검색
+      - SELECT Sno, Sname
+        FROM STUDENT
+        WHERE Dept IS NULL;
+    - EXISTS 사용 검색
+      - SELECT Sname
+        FROM STUDENT
+        WHERE EXISTS(NOT EXIST도 가능) 
+          (SELECT * 
+           FROM ENROL
+           WHERE Sno = STUDENT.Sno AND Cno = ‘C413’);
+  - 데이타 갱신 
+    - UPDATE 테이블 
+      SET {열_이름 = 산술식}`+
+      [WHERE 조건];
+    - UPDATE ENORL
+      SET Final = Final + 5
+      WHERE Sno IN (SELECT Sno 
+                    FROM STUDENT
+                    WHERE Dept = ‘컴퓨터’);
+  - 데이터 삽입
+    - INSERT
+      INTO 테이블[(열_이름_리스트)]
+      VALUES (열_값_리스트);
+    - INSERT
+      INTO 테이블[(열_이름_리스트)]
+      SELECT문;
+    - INSERT
+      INTO STUDENT(Sno, Sname, Year, Dept)
+      VALUE(600, ‘박상철’, 1, ‘컴퓨터’);
+    - INSERT
+      INTO COMPUTER(Sno, Sname, Year)
+        SELECT Sno, Sname, Year
+        FROM STUDENT
+        WHERE Dept= ‘컴퓨터’;
+  - 데이터 삭제
+    - DELETE
+      FROM 테이블
+      [WHERE 조건]; -> WHERE 절 없으면 투플이 모두 삭제 된 빈 테이블이 됨.
+    - DELETE
       FROM STUDENT
-      WHERE Dept IS NULL;
-  - EXISTS 사용 검색
-    - SELECT Sname
-      FROM STUDENT
-      WHERE EXISTS(NOT EXIST도 가능) 
-        (SELECT * 
-         FROM ENROL
-         WHERE Sno = STUDENT.Sno AND Cno = ‘C413’);
-- 데이타 갱신 
-  - UPDATE 테이블 
-    SET {열_이름 = 산술식}`+
-    [WHERE 조건];
-  - UPDATE ENORL
-    SET Final = Final + 5
-    WHERE Sno IN (SELECT Sno 
-                  FROM STUDENT
-                  WHERE Dept = ‘컴퓨터’);
-- 데이터 삽입
-  - INSERT
-    INTO 테이블[(열_이름_리스트)]
-    VALUES (열_값_리스트);
-  - INSERT
-    INTO 테이블[(열_이름_리스트)]
-    SELECT문;
-  - INSERT
-    INTO STUDENT(Sno, Sname, Year, Dept)
-    VALUE(600, ‘박상철’, 1, ‘컴퓨터’);
-  - INSERT
-    INTO COMPUTER(Sno, Sname, Year)
-      SELECT Sno, Sname, Year
-      FROM STUDENT
-      WHERE Dept= ‘컴퓨터’;
-- 데이터 삭제
-  - DELETE
-    FROM 테이블
-    [WHERE 조건]; -> WHERE 절 없으면 투플이 모두 삭제 된 빈 테이블이 됨.
-  - DELETE
-    FROM STUDENT
-    WHERE Sno = 100; 
-  - DELETE
-    FROM ENROL; -> 빈 테이블이 됨.
-  - DELETE
-    FROM ENROL
-    WHERE Cno = ‘C413’ AND Final <60 AND ENROL.Sno IN 
-                                                   (SELECT Sno 
-                                                    FROM STUDENT 
-                                                    WHERE Dept = ‘컴퓨터’);
-
-3) SQL 뷰
-- 뷰는 다른 테이블로부터 유도된 이름을 가진 가상 테이블
+      WHERE Sno = 100; 
+    - DELETE
+      FROM ENROL; -> 빈 테이블이 됨.
+    - DELETE
+      FROM ENROL
+      WHERE Cno = ‘C413’ AND Final <60 AND ENROL.Sno IN 
+                                                     (SELECT Sno 
+                                                      FROM STUDENT 
+                                                      WHERE Dept = ‘컴퓨터’);
+  
+- 3) SQL 뷰
+  - 뷰는 다른 테이블로부터 유도된 이름을 가진 가상 테이블
+  
 
  
                       

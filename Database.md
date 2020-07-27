@@ -214,7 +214,7 @@
   - 도메인 관계 해석
 
 6. SQL
-- 1) SQL 데이터 정의문 
+1) SQL 데이터 정의문 
 - 스키마와 카탈로그 
   - SQL 스키마 : 스키마 이름을 식별되고 허가권자와 스키마의 각 요소에 대한 기술자 포함
     - 테이블, 뷰, 도메인, 기타 허가권이나 무결성 등에 관한 요소 포함
@@ -273,7 +273,7 @@
   - ALTER TABLE ENROL ADD Final CHAR DEFAULT 'F';
   - ALTER TABLE ENROL ALTER Grade SET DEFAULT '0'; -> 기정 값 변경
   - DROP CONSTRAINT 이름 -> 제약 조건 삭제
-- 2) SQL 데이타 조작문
+2) SQL 데이타 조작문
 - 데이타 갬색
   - SELECT [ALL|DISTINCT] 열_리스트
     FROM 테이블_리스트
@@ -373,7 +373,7 @@
                                                     FROM STUDENT 
                                                     WHERE Dept = ‘컴퓨터’);
 
-- 3) SQL 뷰
+3) SQL 뷰
 - 뷰는 다른 테이블로부터 유도된 이름을 가진 가상 테이블
 
  

@@ -422,7 +422,7 @@
         [WITH CHECK OPTION];                
 					=> 뷰에 대한 갱신, 삽입 연산 시 뷰 정의 조건 위반 시 실행 거부 되는 제약 조건
 					
-				=> AS SELECT문에 UNION, ORDER BY 사용 불가
+			=> AS SELECT문에 UNION, ORDER BY 사용 불가
 			
     - CREATE VIEW CSTUDENT 
           AS SELECT Sno, Sname, Year 

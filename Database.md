@@ -518,6 +518,7 @@
 		
   - 다이내믹 SQL
     - 온라인 응용을 실행 시간에 구성할 수 있는 삽입 SQL
+			
     	```sql
      	varchar dynamicSQL[256]; ( 문자 스트링 변수로 SQL문을 저장함 )
       dynamicSQL = “DELETE FROM ENROL 
@@ -531,6 +532,7 @@
         - EXEC SQL EXECUTE IMMEDIATE :dynamicSQL;
         
       - 스트링으로 표현되는 SQL문에는 호스트 변수를 포함 시킬 수 없음				
+			
 			```sql
       		dynamicSQL = “DELETE FROM ENROL WHERE Cno = ? AND Final <= ?”;
         	EXEC SQL PREPARE objSQL FROM :dynamicSQL;
@@ -540,6 +542,5 @@
 	    	EXEC SQL EXECUTE objSQL USING :cno, :grade;
 				( ?를 가진 매개변수가 포함된 명령문 실행 시 USING절을 가진 EXECUTE 문에 이자 값을 명세 )
 			```
-	
 			
 7. 데이터 종속성과 정규화

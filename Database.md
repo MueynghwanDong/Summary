@@ -246,30 +246,28 @@
     - 기본 테이블 : CREATE TABLE로 만들어지는 테이블로 독자적으로 존재하는 테이블
     - 가상 테이블 : CREATE VIEW로 만들어지는 테이블로 독자적 존재 불가, 기본 테이블로 유도되어 만들어 지는 테이블
     - 임시 테이블 : 질의문 처리 과정의 중간 결과로 만들어 지는 테이블
-    - CREATE TABLE 기본 테이블 
-		
+    - CREATE TABLE SQL문
+    
+    	     CREATE TABLE 기본 테이블
              ({열_이름 데이타 타입 [NOT NULL] [DEFAULT 값],}+   
-						 		=> [] 생략 가능, {} 중복 가능 '+'는 1번 이상, * 는 0번 이상
-								
-             [PRIMARY KEY(열_이름_리스트),]                    
-						 		=> 기본키 명세, 개체 무결성 정의
-								
-             {[UNIQUE (열_이름_리스트).]}                       
-						 		=> 대체키(후보키 명세)
-								
+			=> [] 생략 가능, {} 중복 가능 '+'는 1번 이상, * 는 0번 이상								
+             [PRIMARY KEY(열_이름_리스트),]                   
+			=> 기본키 명세, 개체 무결성 정의								
+             {[UNIQUE (열_이름_리스트).]}                    
+			=> 대체키(후보키 명세)							
              {[FOREIGN KEY(열_이름_리스트)
                   REFERENCES 기본테이블[(열_이름_리스트)]
                   [ON DELETE 옵션]
                   [ON UPDATE 옵션],]}*
                   [CONSTRAINT 이름] [CHECK(조건식)]);          
-									=>	외래키로 참조 무결성 유지
-											옵션 NO ACTION, CASCADE, SET NULL, SET DEFAULT
-											CHECK절은 행 갱신, 삽입 시 유지되어야 할 무결성 제약 조건
+			=> 외래키로 참조 무결성 유지
+			   옵션 NO ACTION, CASCADE, SET NULL, SET DEFAULT
+			   CHECK절은 행 갱신, 삽입 시 유지되어야 할 무결성 제약 조건
 											
-    - CREATE TABLE ENROL
-        (Sno INT NOT NULL,
-         Cno CHAR(6) NOT NULL,
-         Grade INT,
+    - 예제
+    	CREATE TABLE ENROL(Sno INT NOT NULL,
+         		Cno CHAR(6) NOT NULL,
+         		Grade INT,
          PRIMARY KEY(Sno, Cno),
          FOREIGN KEY(Sno) REFERENCES STUDENT(Sno)
                 ON DELETE CASCADE
@@ -495,34 +493,32 @@
   - 커서를 이용하는 데이터 조작
   
     - EXEC SQL DECLARE C1 CURSOR FOR 
-				=> 커서 C1 정의, 커서를 FOR 뒤의 SELECT 문과 연결
+    	=> 커서 C1 정의, 커서를 FOR 뒤의 SELECT 문과 연결				
                SELECT Sno, Sname, Year 
  	             FROM STUDENT
                WHERE DEPT= :dept;
-								=> 커서가 OPEN 될 때 실행
-								
+	       		=> 커서가 OPEN 될 때 실행							
       EXEC SQL OPEN C1;                     
-					=> C1으로 접근되는 모든 레코드에 대해 질의문 실행				
-					
-              DO                 
-		            EXEC SQL FETCH C1 INTO :sno, :sname, :year; .....
-               		=>  활동 세트 내의 다음레코드를 지시하게 하고 레코드의 필드 값을 호스트 변수들에 각각 저장 
-									
+      	=> C1으로 접근되는 모든 레코드에 대해 질의문 실행									
+              DO                
+	      	EXEC SQL FETCH C1 INTO :sno, :sname, :year; .....
+               		=>  활동 세트 내의 다음레코드를 지시하게 하고 레코드의 필드 값을 호스트 변수들에 각각 저장 								
               END
       EXEC SQL CLOSE C1;
-				=> 커서 C1 활동 종료 
+      	=> 커서 C1 활동 종료 
       
     - EXEC SQL UPDATE SUTDENT
                SET Year = :year
                WHERE CURRENT OF C1;  
 				=> 현재 가리키고 있는 레코드의 Year 값을 호스트변수가 가진 값으로 변경
-		- EXEC SQL DELETE
-							 FROM STUDENT
-        	  	 WHERE CURRENT OF C1;
+    - EXEC SQL DELETE
+  	       FROM STUDENT
+	       WHERE CURRENT OF C1;
 				=> 현재 가리키고 있는 레코드를 삭제 
 		
   - 다이내믹 SQL
     - 온라인 응용을 실행 시간에 구성할 수 있는 삽입 SQL
+    	```sql
       	varchar dynamicSQL[256]; ( 문자 스트링 변수로 SQL문을 저장함 )
         dynamicSQL = “DELETE FROM ENROL 
                     WHERE Cno = ‘C413’ AND Final <= 60”;
@@ -530,7 +526,8 @@
 				(dynamicSQL에 저장된 SQL문 예비컴파일 후 바인드 해 목적 코드 생성해 objSQL에 저장 )
         EXEC SQL EXECUTE objSQL;                         		
 				(objSQL에 자장된 목적 코드의 SQL문을 실행)
-		
+	```
+	
       - PREPARE문과 EXECUTE문을 하나의 IMMEDIATE문으로 표현 가능
         - EXEC SQL EXECUTE IMMEDIATE :dynamicSQL;
         

@@ -375,12 +375,116 @@
   
 - 3) SQL 뷰
   - 뷰는 다른 테이블로부터 유도된 이름을 가진 가상 테이블
+  - 뷰 정의만 시스템 내에 저장해 두었다가 필요시 실행 시간에 테이블을 구축
+  - ALTER문 을 이용한 변경 불가
+  - 뷰 생성 
+    - CREATE VIEW 뷰_이름[(열_이름_리스트)] 
+          AS SELECT문                       => AS SELECT문에 UNION, ORDER BY 사용 불가
+        [WITH CHECK OPTION];                => 뷰에 대한 갱신, 삽입 연산 시 뷰 정의 조건 위반 시 실행 거부 되는 제약 조건
+    - CREATE VIEW CSTUDENT 
+          AS SELECT Sno, Sname, Year 
+             FROM STUDENT 
+             WHERE Dept = ‘컴퓨터’ WITH CHECK OPTION;
+    - CREATE VIEW HONOR(Sname, Dept, Grade)
+          AS SELECT STUDENT.Sname, STUDENT.Dept, ENROL.Final      
+             FROM STUDENT, ENROL 
+             WHERE STUDENT.Sno = ENROL.Sno AND ERNOL.Final >90;  
+  - 뷰 제거 
+    - DROP VIEW 뷰_이름 {RESTRICT | CASCADE};
+      - RESTRICT -> 다른곳에 참조되고 있지 않는 한 데이터베이스에서 제거되어 없어진다.
+      - CASCADE -> 해당 뷰 뿐만 아니라 뷰가 사용된 다른 모든 뷰나 제약 조건이 함께 제거
+   
+  - 뷰의 조작 연산
+    - 뷰는 검색문을 사용할 수 있으나 삽입, 삭제, 갱신문에는 제한이 있다
+    - 기본키를 포함하지 않는 뷰일 경우 삽입 불가
+    - 둘 이상의 테이블로 동일 조인으로 정의되었다면 갱신 시 많은 문제점 발생 가능
+    - 통계요약을 위해 정의된 경우에 변경 연산은 많은 문제점을 야기 할 수 있다
+    
+    - 변경이 허용되지 않는 경우
+      - 뷰의 열이 상수, 산술연산자, 함수가 사용된 산술 식으로 만들어지면 변경 불가
+      - 집계함수가 관련되어 정의된 뷰는 변경 불가
+      - DISTINCT, GROUP BY, HAVING이 사용되어 정의된 뷰는 변경 불가
+      - 두 개 이상의 테이블이 관련되어 정의된 뷰는 변경 불가
+      - 변경할 수 없는 뷰를 기초로 정의된 뷰는 변경 불가 
+  - 뷰의 장단점
+    - 데이터의 논리적 독립성을 어느 정도 제공할 수 있다.
+    - 데이터의 접근을 제어함으로써 보안을 제공할 수 있다.
+    - 사용자의 데이터 관리를 간단하고 쉽게 해준다.
+    - 여러 사용자의 상이한 응용이나 요구를 지원해 줄 수 있다.
+    - 뷰의 정의를 변경할 수 없다.
+    - 삽입, 삭제, 갱신 연산에 많은 제한을 가지고 있다. 
+    
+- 4) 삽입 SQL
+  - 응용 프로그램 특징 
+    - 삽입 SQL문은 명령문 앞에 ‘EXEC SQL’을 붙여 다른 호스트 언어의 명령문과 쉽게 구별, 끝에는 세미콜론과 같은 특별한 종료 심벌을 붙여 표시
+    - 삽입 SQL 실행문은 호스트 언어의 실행문이 사용되는 곳이면 어디나 나타날 수 있고 실행문, 비 실행문이 있는데 DECLARE CURSOR, BEGIN, END, DECLARE SECTION은 비실행문이다.
+    - 삽입 SQL문은 호스트 변수를 포함 할 수 있고 다른 SQL 필드 이름과 구별하기위해 콜론을 앞에 붙인다. 호스트 변수는 검색 결과를 저장하는 장소를 나타내기 위해 INTO 절에 나타날 수 있다.
+    - SQL문에서 사용할 호스트 변수는 사용전 반드시 삽입 SQL 선언부인 BEGIN/END DECLARE SECTION속에서 선언되어야 한다. 여러개 있어도 무방하다
+    - SQLSTATE라는 스트링 타입의 호스트 변수를 포함한다. 실행 상태 표시가 SQLSTATE 변수를 통해 프로그램에 전달된다.
+      - 변수 값이 “00000” -> 성공적으로 실행, “02000” -> 실행 했지만 아무런 데이터도 검색하지 못함을 의미
+    - 삽입 SQL문의 호스트 변수의 데이터 타입은 이에 대응하는 데이터베이스 필드의 SQL 데이터 타입과 일치해야한다. 
+    - 호스트 변수와 데이터베이스 필드 이름은 같아도 된다.
+    - SQL문 실행 후 SQLSTATE 변수에 반환된 값을 검사해야한다.
+      - EXEC SQL WHENEVER <조건> <행동>;
+      - 조건은 SQLERROR이거나 NOT FOUND, 행동은 CONTINUE, GOTO문
+  - 커서 
+    - SQL 레코드 집합 단위 처리와 호스트 언어의 개별 레코드 단위 처리 사이에 어떤 교량 시설
+    - 응용 프로그램의 삽입 SQL에만 사용되는 새로운 객체, 레코드 집합을 처리하는 데 사용되는 일종의 포인터
+  - 커서가 필요 없는 데이터 조작
+    - 단일 레코드 검색
+      - EXEC SQL SELECT Sname, Dept 
+             INTO :sname, :dept 
+             FROM STUDENT
+             WHERE Sno = :sno;
+    - 갱신 
+      - EXEC SQL UPDATE ENROL
+                 SET Final = Final + :new 
+                 WHERE Cno = ‘C413’; 
+    - 삭제
+      - EXEC SQL DELETE
+                 FROM ENROL
+                 WHERE SNO = :sno
+    - 삽입
+      - EXEC SQL INSERT
+                 INTO STUDENT(Sno, Sname, Dept)
+                 VALUES(:sno, :sname, :dept); 
+                 
+  - 커서를 이용하는 데이터 조작
   
+    - EXEC SQL DECLARE C1 CURSOR FOR -> 커서 C1 정의, 커서를 FOR 뒤의 SELECT 문과 연결
+               SELECT Sno, Sname, Year -> 커서가 OPEN 될 때 실행
+ 	             FROM STUDENT
+               WHERE DEPT= :dept;
+      EXEC SQL OPEN C1;                     -> 질의문 실행
+              DO                            -> C1으로 접근되는 모든 레코드에 대해 
+		            EXEC SQL FETCH C1 INTO :sno, :sname, :year; .....
+                ->  활동 세트 내의 다음레코드를 지시하게 하고 레코드의 필드 값을 호스트 변수들에 각각 저장 
+              END
+      EXEC SQL CLOSE C1;                    -> 커서 C1 활동 종료 
+      
+    - EXEC SQL UPDATE SUTDENT
+               SET Year = :year
+               WHERE CURRENT OF C1;  -> 현재 가리키고 있는 레코드의 Year 값을 호스트변수가 가진 값으로 변경
+    - EXEC SQL DELETE
+               FROM STUDENT
+               WHERE CURRENT OF C1; -> 현재 가리키고 있는 레코드를 삭제 
+               
+  - 다이내믹 SQL
+    - 온라인 응용을 실행 시간에 구성할 수 있는 삽입 SQL
+      - varchar dynamicSQL[256];                         => 문자 스트링 변수로 SQL문을 저장함
+        dynamicSQL = “DELETE FROM ENROL 
+                    WHERE Cno = ‘C413’ AND Final <= 60”;
+        EXEC SQL PREPARE objSQL FROM :dynamicSQL;        => dynamicSQL에 저장된 SQL문 예비컴파일 후 바인드 해 목적 코드 생성해 objSQL에 저장 
+        EXEC SQL EXECUTE objSQL;                         => objSQL에 자장된 목적 코드의 SQL문을 실행
+      - PREPARE문과 EXECUTE문을 하나의 IMMEDIATE문으로 표현 가능
+        - EXEC SQL EXECUTE IMMEDIATE :dynamicSQL;
+        
+      - 스트링으로 표현되는 SQL문에는 호스트 변수를 포함 시킬 수 없음
+      - dynamicSQL = “DELETE FROM ENROL WHERE Cno = ? AND Final <= ?”;
+         EXEC SQL PREPARE objSQL FROM :dynamicSQL;
+            cno = “C413”; 
+             grade= 60;                                                 => ?인 값들인 터미널로부터 입력 받을 수 있음
+         EXEC SQL EXECUTE objSQL USING :cno, :grade;         
+         => ?를 가진 매개변수가 포함된 명령문 실행 시 USING절을 가진 EXECUTE 문에 이자 값을 명세한다.
 
- 
-                      
-
-
-
-
-
+7. 데이터 종속성과 정규화

@@ -223,16 +223,21 @@
       - 각 카탈로그는 반드시 INFORMATION_SCHEMA라는 스키마를 포함하며 카탈로그에 포함된 모든 스키마들의 정보와 스키마들의 모든 요소들에 대한 정보를 제공하기 위한 것
   - 도메인 정의문   
     - SQL이 지원하는 데이터 타입으로만 정의
+		
     - CREATE DOMAIN 도메인_이름 데이타 타입
+		
                     [기정_값_정의]                
 											=> DEFAULT 값 OR NULL
+											
                     [도메인_제약조건_정의리스트]   
 											=> 무결성 제약 조건, CONSTRAINT, CHECK로 명세
+											
     - EX) CREATE DOMAIN DEPT CHAR(4)
                  DEFAULT '???'
                  CONSTRAINT VALID_DEPT
                  CHECK( VALUE INT
                    ('COMP', 'ME', 'EE','ARCH','???'));
+									 
     - ALTER DOMAIN 으로 변경 가능 -> 도메인 수정
     - DROP DOMAIN 도메인_이름 옵션; -> 도메인 삭제
       - 옵션 RESTRICT : 이 도메인을 참조하고 있는 것이 없을 때만 삭제
@@ -242,12 +247,16 @@
     - 가상 테이블 : CREATE VIEW로 만들어지는 테이블로 독자적 존재 불가, 기본 테이블로 유도되어 만들어 지는 테이블
     - 임시 테이블 : 질의문 처리 과정의 중간 결과로 만들어 지는 테이블
     - CREATE TABLE 기본 테이블 
+		
              ({열_이름 데이타 타입 [NOT NULL] [DEFAULT 값],}+   
 						 		=> [] 생략 가능, {} 중복 가능 '+'는 1번 이상, * 는 0번 이상
+								
              [PRIMARY KEY(열_이름_리스트),]                    
 						 		=> 기본키 명세, 개체 무결성 정의
+								
              {[UNIQUE (열_이름_리스트).]}                       
 						 		=> 대체키(후보키 명세)
+								
              {[FOREIGN KEY(열_이름_리스트)
                   REFERENCES 기본테이블[(열_이름_리스트)]
                   [ON DELETE 옵션]
@@ -256,6 +265,7 @@
 									=>	외래키로 참조 무결성 유지
 											옵션 NO ACTION, CASCADE, SET NULL, SET DEFAULT
 											CHECK절은 행 갱신, 삽입 시 유지되어야 할 무결성 제약 조건
+											
     - CREATE TABLE ENROL
         (Sno INT NOT NULL,
          Cno CHAR(6) NOT NULL,
@@ -273,12 +283,15 @@
     - DROP TABLE COURSE CASCADE;
       - CASCADE : 참조하는 다른 뷰 정의, 제약조거너이 있으면 함께 자동 삭제
       - RESTRICT : 다른 뷰 정의에서나 조약조건에서 참조되고 있는 경우 실행되지 않음
+			
     - DROP SCHEMA UNIVERSITY CASCADE;
       - CASCADE : 스키마뿐 아니라 연관 객체들 모두 삭제
       - RESTRICT : 스키마가 공백인 경우에만 삭제
+			
     - ALTER TABLE ENROL ADD Final CHAR DEFAULT 'F';
     - ALTER TABLE ENROL ALTER Grade SET DEFAULT '0'; -> 기정 값 변경
     - DROP CONSTRAINT 이름 -> 제약 조건 삭제
+		
 - 2) SQL 데이타 조작문
   - 데이타 갬색
     - SELECT [ALL|DISTINCT] 열_리스트
@@ -306,11 +319,16 @@
         2)FROM STUDNET JOIN ENROL USING(Sno)
         3)FROM STUDNET NATURAL JOIN ENROL
         WHERE ENROL.Cno ='C413;
+				
     - GROUP BY 이용 검색 
       - SELECT Cno, AVG(Final) AS 기말평균
         FROM ENROL
-        GROUP BY Cno                       => GROUP BY 절에 명세된 열의 값에 따라 그룹으로 분할 
-        HAVING COUNT(*)>=3                 => 각 그룹의 구성 요건 명세 
+        GROUP BY Cno                       
+					=> GROUP BY 절에 명세된 열의 값에 따라 그룹으로 분할 
+					
+        HAVING COUNT(*)>=3         
+					=> 각 그룹의 구성 요건 명세 
+				
     - Subquery 사용 검색
       - SELECT Sname 
         FROM STUDENT 
@@ -321,6 +339,7 @@
       - SELECT Sname, Dept 
         FROM STUDENT 
         WHERE Dept = (SELECT Dept FROM STUDENT WHERE Sname =’정기태‘); 
+				
     - Like 사용 검색
       - SELECT Cno, Cname 
         FROM COURSE
@@ -328,10 +347,12 @@
       - LIKE 프레디킷은 서브 스트링 패턴을 비교하는 비교 연산자 
         - %는 서브 스트링 패턴을 명세 
         - C% -> C로 시작, S__ -> S로 시작 세문자 스트링, LIKE '$S$' -> S포함 스트링
+				
     - NULL 사용 검색
       - SELECT Sno, Sname
         FROM STUDENT
         WHERE Dept IS NULL;
+				
     - EXISTS 사용 검색
       - SELECT Sname
         FROM STUDENT
@@ -339,41 +360,51 @@
           (SELECT * 
            FROM ENROL
            WHERE Sno = STUDENT.Sno AND Cno = ‘C413’);
+					 
   - 데이타 갱신 
     - UPDATE 테이블 
       SET {열_이름 = 산술식}`+
       [WHERE 조건];
+			
     - UPDATE ENORL
       SET Final = Final + 5
       WHERE Sno IN (SELECT Sno 
                     FROM STUDENT
                     WHERE Dept = ‘컴퓨터’);
+										
   - 데이터 삽입
     - INSERT
       INTO 테이블[(열_이름_리스트)]
       VALUES (열_값_리스트);
+			
     - INSERT
       INTO 테이블[(열_이름_리스트)]
       SELECT문;
+			
     - INSERT
       INTO STUDENT(Sno, Sname, Year, Dept)
       VALUE(600, ‘박상철’, 1, ‘컴퓨터’);
+			
     - INSERT
       INTO COMPUTER(Sno, Sname, Year)
         SELECT Sno, Sname, Year
         FROM STUDENT
         WHERE Dept= ‘컴퓨터’;
+				
   - 데이터 삭제
     - DELETE
       FROM 테이블
       [WHERE 조건];
 			=> WHERE 절 없으면 투플이 모두 삭제 된 빈 테이블이 됨.
+			
     - DELETE
       FROM STUDENT
       WHERE Sno = 100; 
+			
     - DELETE
       FROM ENROL; 
 			=> 빈 테이블이 됨.
+			
     - DELETE
       FROM ENROL
       WHERE Cno = ‘C413’ AND Final <60 AND ENROL.Sno IN 
@@ -390,7 +421,9 @@
           AS SELECT문                       
         [WITH CHECK OPTION];                
 					=> 뷰에 대한 갱신, 삽입 연산 시 뷰 정의 조건 위반 시 실행 거부 되는 제약 조건
-			=> AS SELECT문에 UNION, ORDER BY 사용 불가
+					
+				=> AS SELECT문에 UNION, ORDER BY 사용 불가
+			
     - CREATE VIEW CSTUDENT 
           AS SELECT Sno, Sname, Year 
              FROM STUDENT 
@@ -467,11 +500,14 @@
  	             FROM STUDENT
                WHERE DEPT= :dept;
 								=> 커서가 OPEN 될 때 실행
+								
       EXEC SQL OPEN C1;                     
-							=> C1으로 접근되는 모든 레코드에 대해 질의문 실행
-              DO                            
+					=> C1으로 접근되는 모든 레코드에 대해 질의문 실행				
+					
+              DO                 
 		            EXEC SQL FETCH C1 INTO :sno, :sname, :year; .....
                		=>  활동 세트 내의 다음레코드를 지시하게 하고 레코드의 필드 값을 호스트 변수들에 각각 저장 
+									
               END
       EXEC SQL CLOSE C1;                    
 				=> 커서 C1 활동 종료 
@@ -480,6 +516,7 @@
                SET Year = :year
                WHERE CURRENT OF C1;  
 			=> 현재 가리키고 있는 레코드의 Year 값을 호스트변수가 가진 값으로 변경
+			
     - EXEC SQL DELETE
                FROM STUDENT
                WHERE CURRENT OF C1;
@@ -489,22 +526,26 @@
     - 온라인 응용을 실행 시간에 구성할 수 있는 삽입 SQL
       - varchar dynamicSQL[256];                        
 					=> 문자 스트링 변수로 SQL문을 저장함
+					
         dynamicSQL = “DELETE FROM ENROL 
                     WHERE Cno = ‘C413’ AND Final <= 60”;
         EXEC SQL PREPARE objSQL FROM :dynamicSQL;       
 	 				=> dynamicSQL에 저장된 SQL문 예비컴파일 후 바인드 해 목적 코드 생성해 objSQL에 저장 
+					
         EXEC SQL EXECUTE objSQL;                         
 					=> objSQL에 자장된 목적 코드의 SQL문을 실행
+					
       - PREPARE문과 EXECUTE문을 하나의 IMMEDIATE문으로 표현 가능
         - EXEC SQL EXECUTE IMMEDIATE :dynamicSQL;
         
       - 스트링으로 표현되는 SQL문에는 호스트 변수를 포함 시킬 수 없음
       - dynamicSQL = “DELETE FROM ENROL WHERE Cno = ? AND Final <= ?”;
-         EXEC SQL PREPARE objSQL FROM :dynamicSQL;
+        EXEC SQL PREPARE objSQL FROM :dynamicSQL;
             	cno = “C413”; 
             	grade= 60;                                                 
 						 		=> ?인 값들인 터미널로부터 입력 받을 수 있음
-         EXEC SQL EXECUTE objSQL USING :cno, :grade;         
+								
+        EXEC SQL EXECUTE objSQL USING :cno, :grade;         
          	=> ?를 가진 매개변수가 포함된 명령문 실행 시 USING절을 가진 EXECUTE 문에 이자 값을 명세한다.
 
 7. 데이터 종속성과 정규화

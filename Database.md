@@ -540,7 +540,7 @@
 					( ?인 값들인 터미널로부터 입력 받을 수 있음)
 	    	EXEC SQL EXECUTE objSQL USING :cno, :grade;
 				( ?를 가진 매개변수가 포함된 명령문 실행 시 USING절을 가진 EXECUTE 문에 이자 값을 명세 )
-			```
+				```
 	
 			
 7. 데이터 종속성과 정규화

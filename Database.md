@@ -525,30 +525,27 @@
 	
   - 다이내믹 SQL
     - 온라인 응용을 실행 시간에 구성할 수 있는 삽입 SQL
-	<pre><code>
       	varchar dynamicSQL[256];
-		=> 문자 스트링 변수로 SQL문을 저장함
+		- 문자 스트링 변수로 SQL문을 저장함
         dynamicSQL = “DELETE FROM ENROL 
                     WHERE Cno = ‘C413’ AND Final <= 60”;
         EXEC SQL PREPARE objSQL FROM :dynamicSQL;
-		=> dynamicSQL에 저장된 SQL문 예비컴파일 후 바인드 해 목적 코드 생성해 objSQL에 저장 
+		- dynamicSQL에 저장된 SQL문 예비컴파일 후 바인드 해 목적 코드 생성해 objSQL에 저장 
         EXEC SQL EXECUTE objSQL;                         		
-		=> objSQL에 자장된 목적 코드의 SQL문을 실행
-	</code></pre>
+		- objSQL에 자장된 목적 코드의 SQL문을 실행	
 		
       - PREPARE문과 EXECUTE문을 하나의 IMMEDIATE문으로 표현 가능
         - EXEC SQL EXECUTE IMMEDIATE :dynamicSQL;
         
-      - 스트링으로 표현되는 SQL문에는 호스트 변수를 포함 시킬 수 없음
-			
-	<pre><code>
+      - 스트링으로 표현되는 SQL문에는 호스트 변수를 포함 시킬 수 없음			
+	
       	dynamicSQL = “DELETE FROM ENROL WHERE Cno = ? AND Final <= ?”;
         EXEC SQL PREPARE objSQL FROM :dynamicSQL;
           	  	cno = “C413”; 
 	            	grade= 60;
-		=>?인 값들인 터미널로부터 입력 받을 수 있음					
-    	EXEC SQL EXECUTE objSQL USING :cno, :grade;         
-	  	=> ?를 가진 매개변수가 포함된 명령문 실행 시 USING절을 가진 EXECUTE 문에 이자 값을 명세한다.
-	</code></pre>
+		- ?인 값들인 터미널로부터 입력 받을 수 있음					
+    	EXEC SQL EXECUTE objSQL USING :cno, :grade;
+		- ?를 가진 매개변수가 포함된 명령문 실행 시 USING절을 가진 EXECUTE 문에 이자 값을 명세한다.
+	
 			
 7. 데이터 종속성과 정규화

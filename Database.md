@@ -484,7 +484,7 @@
                  FROM ENROL
                  WHERE SNO = :sno
     - 삽입		
-			```sql
+			```
       	EXEC SQL INSERT
                  INTO STUDENT(Sno, Sname, Dept)
                  VALUES(:sno, :sname, :dept); 

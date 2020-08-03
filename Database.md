@@ -483,8 +483,7 @@
       - EXEC SQL DELETE
                  FROM ENROL
                  WHERE SNO = :sno
-    - 삽입
-		
+    - 삽입		
 			```sql
       	EXEC SQL INSERT
                  INTO STUDENT(Sno, Sname, Dept)

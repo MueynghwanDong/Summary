@@ -225,12 +225,10 @@
     - SQL이 지원하는 데이터 타입으로만 정의
 		
     - CREATE DOMAIN 도메인_이름 데이타 타입
-		
-                    [기정_값_정의]                
-											=> DEFAULT 값 OR NULL
-											
-                    [도메인_제약조건_정의리스트]   
-											=> 무결성 제약 조건, CONSTRAINT, CHECK로 명세
+             [기정_값_정의]                
+								=> DEFAULT 값 OR NULL											
+             [도메인_제약조건_정의리스트]   
+								=> 무결성 제약 조건, CONSTRAINT, CHECK로 명세
 											
     - EX) CREATE DOMAIN DEPT CHAR(4)
                  DEFAULT '???'
@@ -486,9 +484,12 @@
                  FROM ENROL
                  WHERE SNO = :sno
     - 삽입
-      - EXEC SQL INSERT
+		
+			```sql
+      	EXEC SQL INSERT
                  INTO STUDENT(Sno, Sname, Dept)
                  VALUES(:sno, :sname, :dept); 
+			```
                  
   - 커서를 이용하는 데이터 조작
   

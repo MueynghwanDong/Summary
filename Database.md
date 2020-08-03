@@ -517,9 +517,8 @@
 				=> 현재 가리키고 있는 레코드를 삭제 
 		
   - 다이내믹 SQL
-    - 온라인 응용을 실행 시간에 구성할 수 있는 삽입 SQL
-			
-    	```sql			
+    - 온라인 응용을 실행 시간에 구성할 수 있는 삽입 SQL			
+    	```		
 			varchar dynamicSQL[256]; ( 문자 스트링 변수로 SQL문을 저장함 )
 			dynamicSQL = “DELETE FROM ENROL 
     	              WHERE Cno = ‘C413’ AND Final <= 60”;
@@ -533,7 +532,7 @@
         - EXEC SQL EXECUTE IMMEDIATE :dynamicSQL;
         
       - 스트링으로 표현되는 SQL문에는 호스트 변수를 포함 시킬 수 없음							
-			```sql
+			```
       		dynamicSQL = “DELETE FROM ENROL WHERE Cno = ? AND Final <= ?”;
         	EXEC SQL PREPARE objSQL FROM :dynamicSQL;
 	          	  	cno = “C413”; 

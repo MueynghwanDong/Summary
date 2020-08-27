@@ -872,5 +872,290 @@
 - 협력적 프로세스 : 시스템 내에서 실행중인 다른 프로세스의 실행에 영향을 주거나 영향을 받는 프로세스
   - 논리 주소 공간을 직접 공유하거나 파일 or 메시지에 의해 데이터의 공유가 허용
 - 경쟁 상황 : 동시에 여러 개의 프로세스가 동일한 자료를 접근하여 조작하고 실행 결과가 접근이 발생한 특정 순서에 의존하는 상황
-6.2 임계구역 문제
+2 임계구역 문제
 - 한 프로세스가 자신의 임계구역에서 수행하는 동안 다른 프로세스들은 임계구역에 들어갈 수 없다
+- 프로세스들이 협력할 때 사용할 수 있는 프로토콜을 설계하는 것
+- 해결하기 위한 요구조건
+  - 상호 배제(mutual exclusion) : 프로세스 p가 자기 임계구역에서 실행된다면, 다른 프로세스들은 그들 자신의 임계구역에서 실행될 수 없음
+  - 진행(progress) : 자기 임계구역에서 실행되는 프로세스 없고 임계구역으로 진입하려는 프로세스가 있다면 나머지 구역에서 실행중이지 않은 프로세스들만 다음 임계구역으로 진입할 지 결정에 참여 가능, 이 선택은 무한정 연기될 수 없음
+  - 한정된 대기(bounded wating) : 임계구역 진입 요청 후부터 허용때까지 다른 프로세스들이 임계구역에 진입하도록 허용되는 횟수에 한계가 있다
+- 운영체제 내에서 임계구역을 다루기 위해 선점형 커널, 비선점형 커널 두 가지 접근법 사용
+  - 선점형 커널 : 프로세스가 커널 모드에서 수행되는 동안 선점하는 것 허용
+  - 비선점형 커널 : 커널 모드에서 수행되는 프로세스의 선점을 허용않고 커널 모드 프로세스는 커널을 빠져나갈 때까지 or 봉쇄될 때까지 or 자볼적으로 CPU 제어를 양보할 때까지 계속 수행
+
+3 피터슨의 해결안
+- 임계 구역과 나머지 구역을 번갈아 실행하는 두 개의 프로세스로 한정
+- 두 프로세스가 두 개의 데이터 항목을 공유하도록 하여 해결
+- int turn; (임계구역으로 진입할 순번)
+  - turn == i 이면 프로세스 Pi가 임계구역에서 실행될 수 있다
+- boolean flag[2]; (프로세스가 임계구역으로 진입할 준비가 되었다는 것을 나타낸다)
+  - flag[i] == true 이면 Pi가 임계구역으로 진입할 준비가 되었음을 나타냄
+<pre><code>
+do{
+  flag[i] = TRUE;
+  turn = j;
+  while(flag[j] && turn == j);
+  
+  critical section
+  
+  flag[i] = FALSE;
+  
+  remainder section
+  } while(TRUE);
+</code></pre>
+
+4 동기화 하드웨어
+- test_and_set() 명령어
+<pre><code>
+Boolean test_and_set(boolean *target){
+  boolean rv = *target;
+  *target = true;
+  return rv;
+}
+
+do{
+  while(test_and_set(&lock))
+    ; // do noting
+    // critical section
+   lock = FALSE;
+    // remainder section
+  } while(TRUE);
+  
+</code></pre>
+
+- compare_and_swap() 명령어
+<pre><code>
+void compare_and_swap(int *value, int expected, int new_value){
+  int temp = *value;
+  
+  if(*value == expectd)
+    *value = new_value;
+  return temp;
+}
+
+do{
+  while(test_and_set(&lock))
+    ; // do noting
+    // critical section
+   lock = 0;
+    // remainder section
+  } while(TRUE);
+  
+</code></pre>
+
+5 Mutex Locks
+- 임계구역을 보호하고 경쟁 조건을 방지하기 위해 mutex 락을 사용
+- 프로세슷는 임계구역에 들어가기 전 반드시 락을 획득하고 빠져 나올 때는 반환해야한다
+- boolean available; 락의 가용여부 
+<pre><code>
+// 락 획득
+acquire(){
+  while(!available)
+    ; // busy wait
+   available = false;
+ }
+// 락 반환
+release(){
+  available = true;
+}
+</code></pre>
+- 두 함수 호출은 원자적으로 수해오디어야 한다
+- 바쁜 대기를 하는 단점이 있다
+  - 프로세스가 임계구역에 있는 동안 다른 프로세스들은 acquire() 함수를 호출하는 반복문을 계속 실행해야 한다
+  - 락이 사용해지기를 계속 기다리면 프로세스가 회전하고 있기에 spinlock이라고 부른다
+  - CPU 사이클을 낭비하게 된다
+- spinlock은 문맥 교환을 전혀 필요로 하지 않는 장점이 있다
+  - 짧은 시간동안 락을 소유할 경우 spinlock이 유용
+
+6 세마포(Semaphores)
+- 세마포 S는 정수 변수로, 원자적 연산 wait(), signal()로만 접근이 가능
+<pre><code>
+wait(S){
+  while(S<=0)
+    ;// 바쁜 대기
+  S--;
+}
+signal(S){
+  S++;
+}
+</code></pre>
+
+6.1 세마포 사용법
+- 카운팅 세마포는 제한이 없는 영역을 갖는다
+- 이진 세마포는 0과 1 사이의 값만 가능, mutex 락과 유사하게 동작
+- 상호 배제를 보장하기위해 이진 세마포가 사용되기도 한다
+- 카운팅 세마포는 유한 개수를 가진 자원에 대한 접근을 제어하는데 사용
+
+6.2 구현
+- 봉쇄연산은 프로세스를 세마포에 연관된 대기큐에 넣고, 프로세스의 상태를 대기 상태로 전환
+- 제어가 CPU 스케줄러로 넘어가고, 스케줄러는 다른 프로세스 실행을 위해 선택
+<pre><code>
+typedef struct{
+  int value;
+  struct process *list;
+} semaphore;
+
+void wait(semaphore *S){
+  S->vlaue--;
+  if(S->value <0){
+    프로세스를 s->list에 넣음;
+    block();
+  }
+}
+
+void signal(semaphore *S){
+S->value++;
+  if(S->value <=0){
+    S->list로부터 하나의 프로세스 P를 꺼낸다;
+    wakeup(P);
+  }
+}
+</code></pre>
+
+- signal 연산은 프로세스 리스트에서 한 프로세스를 꺼내 프로세스를 깨워 줌.
+- block 연산은 자기를 호출한 프로세스를 중지
+- wakeup(P) 연산은 봉쇄된 프로세스 P의 실행을 재개시킨다
+- 각 세마포는 정수 값과 프로세스 제어 블록의 리스트에 대한 포인터를 가지고 있다 
+- 세마포가 원자적으로 실행되어야 한다는 것은 매우 중요!
+- 두 프로세스가 동시에 wait와 signal 연산들을 실행할 수 없도록 반드시 보장해야 한다
+
+6.3 교착 상태와 기아
+- 대기 큐를 가진 세마포 구현은 두개 이상 프로세스들이 오로지 대기 중인 프로세스들 중 하나에 의해서만 야기 될 수 있는 사건을 무한정 기다리는 상황이 발생할 수 있다.
+- signal() 연산의 실행을 의미하고 이런상태에서 프로세스들은 교착 상태라고 한다
+- 무한 봉쇄 or 기아 => 프로세스들인 세마포에서 무한정 대기하는 것
+
+7. 고전적인 동기화 문제들
+7.1 유한 버퍼 문제
+<pre><code>
+int n;
+semaphore mutex = 1;
+semaphore empty = n;
+semaphore full = 0;
+do{
+  wait(full);
+  wait(mutex);
+  // remove an item from buffer to nextc
+  signal(mutex);
+  signal(empty);
+  // consum the item in nextc
+} while(TRUE);
+</code></pre>
+- n개의 버퍼들로 구성된 풀이 있으며 각 버퍼들은 한 항목(item) 저장할 수 있다고 가정
+- mutex 세마포는 상호 배젲 기능을 제공하며 1로 초기화
+- empty는 비어 있는 버퍼 수, full은 꽉 찬 버퍼의 수
+- 생산자가 소비자를 위해 꽉 찬 버퍼를 생산해내고 소비자는 생산자를 위해 비어 있는 버퍼를 생산
+
+7.2 Readeers-Writers 문제
+- writer와 다른 스레드가 동시 접근 시 혼란 야기
+- wirter가 작업 동안 공유 데이터베이스에 배타적 접근 권한을 가질 필요가 있다
+
+- writer가 공유 객체 사용의 허가를 엊지 못했다면 reader를 기다리게 해서 안된다.
+- writer가 준비되면 가능한 빨리 쓰기를 수행할 것을 요구한다 -> 다른 새로운 reader들은 읽기 시작을 못한다
+-> 해결안이 기아를 낳을 수 있다
+- 첫번째 경우는 writer가 기아, 두번째는 reader가 기아 될 수 있다.
+<pre><code>
+semaphore rw_mutex = 1;
+semaphore mutex = 1;
+int read_count = 0;
+//Writer 구조
+do{
+  wait(rw_mutex);
+  // writeing is performed
+  signal(rw_mutex);
+} while(true);
+
+// Reader 구조
+do{
+  wait(mutex);
+  read_count++:
+  if(read_count ==1)
+    wait(rw_mutex);
+  signal(mutex);
+  // reading is performed
+  wait(mutex);
+  read_count--;
+  if(read_count == 0)
+  signal(rw_mutex);
+  signal(mutex);
+}while(true);
+</code></pre>
+
+- Reader-Wirter락이 유용한 경우
+  - 공유 데이터를 읽기만 하는 프로세스와 쓰기만 하는 스레드를 식별하기 쉬운 응용
+  - Writer보다 reader의 개수가 많은 용용
+  
+7.3 식사하는 철학자들 문제
+<pre><code>
+semaphore chopstick[5];
+do{
+  wait(chopstick[i]);
+  wait(chopstick[(i+1) %5]);  
+  // eat for awhile
+  signal(chopstick[i]);
+  signal(chopstick[(i+1) %5]);
+  // think for awhile
+} while(true);
+</code></pre>
+- 두 철학자가 동시에 식사하지 않음을 보장하나 교착 상태를 야기할 가능성이 있음
+
+8. 모니터
+- 세마포는 signal, wait를 바꿔쓰거나 잘못 사용할 경우, 빠트린 경우 교착 상태가 발생하게된다.
+8.1 모니터 사용법
+- 모니터 형은 모니터 내부에서 상호 배제가 보장되는 프로그래머가 정의한 일련의 연산자 집합을 포함하는 ADT
+  - 변수들의 선언을 포함 -> 변수들의 값은 형에 해당하는 한 인스턴스 상태를 정의
+  - 프로시저 or 함수들의 본체 포함
+  - 다른 프로세스들이 직접 사용 불가
+  - 모니터 내 정의된 함수만 오직 모니터 내 지역적으로 선언된 변수들과 형식 매개변수들에만 접근 가능
+  - 모니터 내 지역변수는 오직 지역 변수만 가능
+- 모니터는 모니터 안에 항상 하나의 프로세스만 활성되도록 보장해 준다
+  - condition형의 변수로 동기화 제공
+  - condition에 의해 호출될 수 있는 연산은 오직 wait와 signal 뿐이다
+  - wait는 signal 호출때까지 일시중단되어야 함
+  - signal은 정확히 하나의 일시중단 프로세스를 재개
+  - Signal and wait : P는 Q가 모니터를 떠날 때까지 기다리거나 다른 조건을 기다린다
+  - Signal and continue : Q는 P가 모니터를 떠날 때까지 기다리거나 다른 조건을 기다린다
+8.2 모니터를 사용한 식사하는 철학자 해결안
+<pre><code>
+monitor DiningPhilosphers{
+  enum{thinking, hungry, eating} state[5];
+  condition self[5];  
+  
+  void pickup(int i){
+    state[i] = HUNGRY;
+    test(i);
+    if(state[i] != EATING)
+      self[i].wait();
+  }
+  void putdown(int i){
+    state[i] = THINKING;
+    test((i+4)%5);
+    test((i+1)%5);
+  }
+  void test(int i ){
+    if((state[(i+4)%5] != EATING && (state[i]== HUNGRY) && (state[i+1)%5]!= EATING)){
+      state[i] = EATING;
+      self[i].signal();
+    }
+  }
+  initialization code(){
+    for(int i = 0; i<5; i++)
+      state[i] = THINKING;
+    }
+}
+</code></pre>
+- 식사하기전 pickup 연산을 반드시 호출해야 한다
+- 식사 후에는 putdown 연산 호출
+
+9. 대체 방안들
+9.1 트랜잭션 메모리
+- 메모리 트랜잭션 : 메모리 읽기와 쓰기 연산의 원자적인 연속적 순서
+  - 한 트랜잭션의 모든 연산이 완수되면 메모리 트랜잭션은 확정
+  - 그렇지 않으면 그 시점까지 완수된 모든 연산들은 취소되고 시작 이전의 상태로 roll-back
+- atomic{S}가 추가
+  - S 내 연산이 트랜잭션으로 실행된다는 것을 보장
+- STM은 트랜잭션 블록 안에 검사 코드르르 삽입해 동작
+  - 컴파일러에 의해 삽입되어 명령문들이 동시 시행 지점과 저수준 락킹이 필요한 지점을 검사하여 각 트랜잭션을 관리
+- HTM은 개별 처릴기 캐시에 존재하는 공유 데이터 충돌을 해결하고 관리하기위해 HW 캐시 계층 구조와 캐시 일관성 프로토콜을 사용
+  - 코드 계측이 필요 없고 STM보다 적은 오보헤드를 가진다.
+  - 기존 캐시 계층 구조와 캐시 일관성 프로토콜을 트랜잭션 메모리를 지원하기위해 변경해야 한다
+ 

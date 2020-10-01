@@ -1710,4 +1710,133 @@ R1 : AFTER UPDATING STUDENT.Year:
 			- 지연 규정은 검사 시기가 WHEN COMMIT으로 표현된다 ( 트랜잭션이 완전히 끝난 뒤 적용시켜야 하기 때문 )
 
 - 무결성 규정의 명세
-	- 트리거 
+	- 트리거
+		- 메시지를 보내거나 어떤 값을 갱신하게 되면 또 다른 값을 자동적으로 갱신하게끔 어떤 프로시저를 기동시키는 것 등 이러한 것을 트리거로 구현할 수 있다
+		- 트리거 조건이 만족되는 경우 취해야 되는 조치를 명세한다
+			- 조건을 프레디킷 형식으로 명세, 참이 될 때 조치가 유발, 기동된다
+			- 특정 조건이 만족되면 활동을 시작하는 디먼 개념과 비슷
+		- DEFIND TRIGGER 트리거 이름 ON 트리거 조건 : 명령문 
+		<pre><code>
+			DEFINE TRIGGER STUDENTS
+				ON INSERTION OF STUDENT:
+				(UPDATE DEPARTMENT
+				SET			Tstdn = Tstdn+1
+				WHERE 	Dno = NEW_STUDENT.Dno);
+			DEFINE TRIGGER STUDDEL
+				ON DELLTION OF STUDENT:
+				(UPDATE DEPARTMENT
+				SET			Tstdn = Tstdn-1
+				WHERE 	Dno = OLD_STUENT.Dno);
+		</code></pre>
+		
+	- SQL에서의 무결성 규정
+		- 도메인 제약 조건
+			- [CONSTRAINT constraint] CHECK (cond-exp)
+			<pre><code>
+			CREATE DOMAIN DYEAR SMALLINT
+			CONTRAINT CONST-YEAR
+			CHECK(VALUE IN (1,2,3,4));
+			</code></pre>
+		- 기본 테이블 제약 조건
+		<pre><code>
+			[CONSTRAINT constraint]
+				{PRIMARY KEY | UNIQUE} (column-list) | [CONSTRAINT constraint]
+				FOREIGN KEY (column-list)
+				REFERENCE base-table[(column-list)]
+								[ON DELETE {NO ACTION|CASCADE}]
+								[ON UPDATE {NO ACTION|CASCADE}]
+				| [ONSTRAINT consotraint] CHECK (cond-exp)
+		</code></pre>		
+		<pre><code>
+			CREATE TABLE ENROL
+				(Sno DSNO NOT NULL,
+				Cn DCNO NOT NULL,
+				Grade INTEGER NOT NULL,
+				PRIMARY KEY(Sno, Cno),
+				FOREIGN KEY (Sno)	REFERENCE STUDENT
+								ON DELETE CASCADE
+								ON UPDATE CASCADE
+				FOREIGN KEY (Cno)	REFERENCE COURSE
+								ON DELETE CASCADE
+								ON UPDATE CASCADE
+				CHECK(Grade >=0 AND Grade <= 100);
+		</code></pre>
+		- 일반 제약 조건
+			- CREATE ASSERTION contraint CHECK(cond-exp);
+			<pre><code>
+			CREATE ASSERTION CONST_YEAR
+					CHECK ((SELECT MIN(STUENT.Year) FROM STUDNET) >0 );
+			</code></pre>
+			- DROP ASSERTION constraint;
+			<pre><code>
+			SET CONSTRAINTS constraint_list {DEFERRED | IMMEDIATE}
+			</code></pre>
+			
+- 보안의 개념
+	- 데이터베이스 보안은 불법적인 데이터의 폭로나 변경, 파괴로부터 데이터베이스를 보호하는 것을 말함
+		- 법적, 윤리적 통제 : 보안 환경 조성에 큰 영향을 줌
+		- 행정, 관리적 통제 : 직원과 조직을 감독하여 데이터베이스 오용을 탐지하고 방지
+		- 물리적 통제 : 물리적이고 적극적으로 보안 위반을 예방하고 탐지하는 것
+		- 기술적 통제 : HW, SW, DB의 기술적 통제를 통한 보안
+		
+- 데이터베이스 보안의 구현
+	- 데이타베이스 접근 제어 : 권한을 부여 받은 사용자에게만 데이터를 이용할 수 있게 하는 것
+		- 데이타 검색 제어는 데이타 프라이버시를 유지
+		- 데이터 갱신 제어는 정확성을 유지
+		- 누가 무슨 데이타에 무슨 연산을 수행하는가를 제어하는 기법을 요구
+	- 데이타베이스 접근 제어 모델
+		- 사용자 식별, 데이타 식별, 식별된 데이타에 식별된 사용자가 수행할 수 있는 연산들을 명세하는 것
+		- 신분 증명과 권한 부여 두단계로 이루어짐
+		![ex_screenshot](/res/db38.png) 
+		- 사용자, 데이타, 연산 요구들을 권한부여 테이블에 대응시켜 요청한 연산을 허가할 것인지 결정
+		- 사용자 신분 확인후 권한 검사를 확인
+		- 연산 실행 동안 메인 메모링레 권한 테이블을 설정
+		- 연산 요청을 할 때마다 시스템을 내부 테이블을 검사하고 사용자 활동에 대한 로그를 유지
+		- 로그는 사용자 활동을 감시하는 감시 파일이됨
+		- 권한부여 검사는 사용자가 프로그램이나 스키마 기동시키거나 검색이나 갱신명령 요청 시 수행
+	
+	- 보안 서브시스템
+		- 권한부여 규정
+			- 사용자 프로파일 : DB 접근하는 각 사용자에 대해 접근할 수 있도록 권한이 부여된 데이타 객체와 연산에 대한 정보를 저장한 레코드
+			- 권한 부여 테이블 : 시스템은 모든 사용자에 대한 프로파일을 하나의 테이블로 종합한 것
+			- 권한부여의 대상이 되는 데이타 객체 크기는 시스템이 얼마나 복잡한 관리 능력을 가지고 있느냐에 달려 있다
+			- 권한부여 대상이 되는 데이타 객체 명세 방법
+				- 객체 이름 명세 : 데이타 객체를 단순히 객체ㅔ이름으로 명세 -> 컴파일 시간에 검사
+				- 데이타 값 명세 : 데이터 객체를 어던 조건으로 명세하여 조건을 만족하는 레코드나 데이타 필드를 권한 부여 대상으로 정의하는 것 -> 내용 의존 제어로 실행 시간에 검사
+				- 통계적 명세 : 데이터 객체 명세에 집계 연산자가 포함된것 -> 객체 이름 명세나 값 의존 명세에 적용 가능
+				- 프로그램 : DB를 접근하는 프로그램에 대해 명세하는 것
+				- 권한부여 테이블 : 접근 통제의 가장 중요한 데이타 객체는 권한부여 테이블 자체!! -> 테이블 갱신 연산은 DBA 제외하고 허용 불가
+		- 권한 검사자 
+			- 권한부여 테이블로 명세된 규정은 최고의 특권과 보호를 받는 권한 검사자, 즉 보안 집행기에 의해 시행된다
+- 권한 부여 명세 기법
+	- 뷰 기법 : 그 정의 자체를 권한부여 기법으로 사용할 수 있다
+		- 보안에 민감한 데이타를 권한이 없는 사용자로부터 은닉시킬 수 있어 불법적 접근을 예방할 수 있다
+		- 갱신이나 삽입, 삭제와 같은 연산에 제한이 있다
+		- 허용된 데이타에 연산을 제한할 수 있는 방법은 아니다
+	- GRANT/REVOKE 기법
+		- DBA 권한 -> 권한 일부를 다른 사용자에게 부여할 수 있다
+		- GRANT 권한 ON 데이타 객체 TO 사용자 [WITH GRANT OPTION]
+		- DBMS는 항상 권한부여가 어떻게 파급되어 가는지 파악하고 있어야 한다
+		- DBA : GRANT INSERT, DELETE ON STUDENT TO U1; -> U1은 삽입과 삭제 권한을 갖게 된다
+		- DBA : GRANT SELECT ON STUDENT TO U2 WITH GRANT OPTION; -> U2은 검색 권한을 갖고 다른 사용자에게 권한을 부여 할 수 있다
+		- REVOKE [GRANT OPTION FOR] 권한 ON 데이타 객체 FROM 사용자 {CASCADE, RESTRINCT};
+		- DBA : REVOKE SELECT ON STUDENT FROM U2 CASCADE; -> 취소는 CASCADE에 따라 자동적으로 파급, GRNAT OPTION FOR가 사용되면 다른 사용자에게 권한을 부여할 수 있게 한 권한 자체를 취소하려는 것
+
+	- 필수 접근 제어
+		- 각 데이타 객체에 일정한 비밀 등급을 매기고 각 사용자도 일정한 허가 등급을 지정해 데이터 객체가 적절한 허가 등급을 가진 사용자에 의해서만 접근 되도록 하는 필수 접근 제어 기법
+
+- 통계 데이타베이스 
+	- 통계적 요약 정보만 제공하는 데이타베이스
+	- 개인의 정보가 유도될 수 없도록 방지하는 데 목적이 있디
+	- 통계질의문 : 통계 집계 함수가 들어간 질의문만 허용하는 질의문
+		- 계획적으로 잘 스케줄하면 개인 정보를 유도해 낼 수 있다 
+	- 어떤 질의문의 실행 결과에 관련된 레코드 수가 어떤 기본수 b보다 작은 경우에는 응답을 허용하지 않아야 한다 
+		- n-b(n은 데이타베이스 전체 레코드 수)보다 큰 경우에도 응답을 거부해야 한다
+		- 응답 가능 통계 질의문은 결과에 관련된 레코드 수 c가 b<=c<=n-b의 범위에 들ㅇ러가야 한다
+	- 개인 추적자 : 특정 개인의 정보를 추적해서 알아내게 해주는 프레디킷개인 추적자
+	- 일반 추적자 : 응답이 허용되지 않는 임의의 프레디킷을 포함하는 질의문에 대해 응답을 유도해 낼 수 있는 프레디킷
+		- 응답이 허용되지 않는 어떤 특정 프레디킷을 가진 질의문에 대해서만 응답을 유도할 수 있다
+		- 어떤 프레디킷 결과에 속하는 레코드 수 c가 2b<= c <= n-2b에 속하면 일반 추적자
+	- 통계 데이타베이스의 보안 문제는 이러한 일반 추적자를 거의 항상 찾아낼 수 있고 개인 추적자도 찾을 수 있다는 것에 있다
+	
+	

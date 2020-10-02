@@ -2144,6 +2144,7 @@ R1 : AFTER UPDATING STUDENT.Year:
 	- 의사결정 지원 시스템 : 비즈니스 내에서 관리적인 의사결정에 사용되는 컴퓨터화된 도구들로 구성되 ㄴ시스템
 		- 광범위하고 종합적인 데이타 처리가 요구된다 
 	- 의사결정 지원 시스테 구조
+	
 	![ex_screenshot](/res/db44.png) 
 		- 데이타 저장소 : 비즈니스 데이타, 비즈니스 모델 데이타를 포함
 			- 비즈니스 데이타는 데이터 분석과 질의에 최적이 되는 구조로 운영 데이터를 변환시켜 저장한 것
@@ -2161,8 +2162,9 @@ R1 : AFTER UPDATING STUDENT.Year:
 	- 시계열이나 동향 분석 작업에도 아주 적합
 	- 정기적으로 갱신하기 때문에 변경이 자주 일어나지 않음
 	- 정보의 변경 단위가 크고 계획된 정책에 따라 재생되며 내용이 점증적이다, 갱신은 수집을 담당하는 서브 모듈이 취급
-	- 데이타 분석과 질ㄹ의 처리를 위해 최적화된 판독 전용 데이타베이스
-	![ex_screenshot](/res/db45.png) 
+	- 데이타 분석과 질의 처리를 위해 최적화된 판독 전용 데이타베이스
+
+![ex_screenshot](/res/db45.png) 
 	- 수집 / 적재 관리자는 데이타 추출을 수행하면서 필터링, 변환, 통합, 분류, 요약 등의 작업을 담당
 	- 데이타 웨어하우스와 운영데이타는 분리
 	- 통합되어 있고 장기간 동안의 과거 데이타를 포함
@@ -2188,24 +2190,29 @@ R1 : AFTER UPDATING STUDENT.Year:
 	
 	- 사실 데이타와 차원 테이블
 		- 사실 데이블 : 분석할 데이타의 모든 사실을 포함하는 테이블
-		![ex_screenshot](/res/db46.png) 
+	
+	![ex_screenshot](/res/db46.png) 
 			- B-id, I-id, T-id : 차원 애트리뷰트
 			- Total : 측정 애트리뷰트
 			- 다차원 데이타 : 차원 애트리뷰트와 측정 애트리뷰트로 모델링 한 것
 		- 차원 테이블 : 사실 테이블의 차원에 관한 추가적 정보를 별도 테이블로 저장한 것
 			- 각 차원 테이블은 자연히 사실 테이블에 있는 차원 애트리뷰트를 포함
 			- 차원 애트리뷰트는 차원 테이블을 가리키는 차원 식별자 애트리뷰트
-		![ex_screenshot](/res/db47.png) 
+	
+	![ex_screenshot](/res/db47.png) 
 		- 데이타 큐브
-		![ex_screenshot](/res/db48.png) 
+		
+	![ex_screenshot](/res/db48.png) 
 		
 	- 스타 스키마 
 		- 다차원 의사결정 지원 데이타를 분석하기 위해 하나의 사실 테이블과 여러 개의 차원 테이블로 구성된 관계 데이타베이스 스키마로 사상하기 위해 사용되는 데이터 모델링 기법
 		- 다차원 데이타 모델 : 차원 애트리뷰트와 측정 애트리뷰트로 구성된 사실 테이블과 차원을 기술하는 차원테이블을 스타 스키마 형태로 표현한 데이타 구조
 		- 눈송이 스키마 : 차원테이블들이 정규화되어 여러 테이블로 분해된 것
 		- 성좌 스키키마 : 차원 테이블을 공유하느 여러 개의 사실 테이블로 구성 된 것
-		![ex_screenshot](/res/db49.png) 
-		![ex_screenshot](/res/db50.png) 
+	
+	![ex_screenshot](/res/db49.png) 
+	
+	![ex_screenshot](/res/db50.png) 
 
 - 다차원 집계 질의
 	- 드릴 다운 : 일반적인 것부터 상세한 것으로 질의하는 것
@@ -2226,13 +2233,15 @@ R1 : AFTER UPDATING STUDENT.Year:
    		FROM SALSE S
    		GROUP BY CUBE(S.B-id, S.I-id)
 		</code></pre>
-		![ex_screenshot](/res/db51.png) 
+	
+	![ex_screenshot](/res/db51.png) 
 		<pre><code>			
 			SELECT S.B-id, S.I-id, SUM(S.Total)
    		FROM SALSE S
    		GROUP BY ROLLUP(S.B-id, S.I-id)
-		</code></pre>		
-		![ex_screenshot](/res/db52.png) 
+		</code></pre>				
+	
+	![ex_screenshot](/res/db52.png) 
 		
 	- CUBE 연산자는 나중에 제출되는 질의문을 실행할 때 사용할 수 있도록 사실 테이블의 모든 차원에 대해 집계를 미리 계산해 저장해 두기위해서도 사용된다
 	
@@ -2268,4 +2277,5 @@ R1 : AFTER UPDATING STUDENT.Year:
 			- 들어오는 데이타가 속해야 될 카테고리를 결정하느 데 사용
  - 기계학습 : 뉴럴 넷을 이용한 알고리즘을 적용 ( 가중치와 경계 값을 어떻게 결정하는 가가 중요)
  - 데이타로부터 지식의 추출
+ 
  	![ex_screenshot](/res/db53.png) 

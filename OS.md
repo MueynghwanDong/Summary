@@ -2077,6 +2077,7 @@ monitor DiningPhilosphers{
 4.1 선입 선처리 스케줄링
 - 빠른 서비스를 제공하지는 못함
 - 98, 183, 37, 122, 14, 124, 65, 67
+
 ![ex_screenshot](/res/os66.png)
 
 4.2 최소 탐색 시간 우선 스케줄링(SSTF)

@@ -2190,7 +2190,8 @@ R1 : AFTER UPDATING STUDENT.Year:
 	- 데이타가 주로 다차원 배열 구조라는 전제하에 만들어진 질의를 지원
 	
 	- 사실 데이타와 차원 테이블
-		![ex_screenshot](/res/db46.png)			
+	
+	![ex_screenshot](/res/db46.png)			
 		
 	- 사실 테이블 : 분석할 데이타의 모든 사실을 포함하는 테이블
 		- B-id, I-id, T-id : 차원 애트리뷰트
@@ -2200,18 +2201,22 @@ R1 : AFTER UPDATING STUDENT.Year:
 	- 차원 테이블 : 사실 테이블의 차원에 관한 추가적 정보를 별도 테이블로 저장한 것
 		- 각 차원 테이블은 자연히 사실 테이블에 있는 차원 애트리뷰트를 포함
 		- 차원 애트리뷰트는 차원 테이블을 가리키는 차원 식별자 애트리뷰트			
-		![ex_screenshot](/res/db47.png) 		
+	
+	![ex_screenshot](/res/db47.png) 		
 	
 	- 데이타 큐브
-		![ex_screenshot](/res/db48.png) 
+	
+	![ex_screenshot](/res/db48.png) 
 		
 	- 스타 스키마 
 		- 다차원 의사결정 지원 데이타를 분석하기 위해 하나의 사실 테이블과 여러 개의 차원 테이블로 구성된 관계 데이타베이스 스키마로 사상하기 위해 사용되는 데이터 모델링 기법
 		- 다차원 데이타 모델 : 차원 애트리뷰트와 측정 애트리뷰트로 구성된 사실 테이블과 차원을 기술하는 차원테이블을 스타 스키마 형태로 표현한 데이타 구조
 		- 눈송이 스키마 : 차원테이블들이 정규화되어 여러 테이블로 분해된 것
 		- 성좌 스키마 : 차원 테이블을 공유하느 여러 개의 사실 테이블로 구성 된 것		
-		![ex_screenshot](/res/db49.png)			
-		![ex_screenshot](/res/db50.png) 
+	
+	![ex_screenshot](/res/db49.png)			
+	
+	![ex_screenshot](/res/db50.png) 
 
 - 다차원 집계 질의
 	- 드릴 다운 : 일반적인 것부터 상세한 것으로 질의하는 것
